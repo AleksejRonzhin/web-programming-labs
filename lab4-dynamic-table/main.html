@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic table</title>
+    <script src="dynamic-table.js"></script>
+    <link href="stylesheet.css" rel="stylesheet"/>
+</head>
+<body onload="generateTableDiv()">
+<table id="mainTable">
+    <tr>
+        <td>
+            <div class="panel">
+                <label for="tableSize">Размер фигуры:</label>
+                <input id="tableSize" oninput="tryConstructTable(value)" type="text" value="6" class="parameterInput"/>
+            </div>
+        </td>
+        <td>
+            <div class="panel">
+                <form>
+                    <fieldset onchange="fillRedCells(radio.value)">
+                        <legend>Красные ячейки</legend>
+                        <label>
+                            <input type="radio" name="radio" value="sum"/>
+                        </label>Сумма всех чисел<br>
+                        <label>
+                            <input type="radio" name="radio" value="avg"/>
+                        </label>Среднее арифметическое<br>
+                        <button>Сбросить</button>
+                    </fieldset>
+                </form>
+            </div>
+        </td>
+        <td>
+            <div class="panel">
+                <label>Убрать цвет строк<br>
+                    <input type="text">
+                </label>
+            </div>
+            <div class="panel">
+                <button>Повернуть на 90 градусов</button>
+            </div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

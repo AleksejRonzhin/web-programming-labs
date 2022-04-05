@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="tabulation-function.js"></script>
+    <link href="stylesheet.css" rel="stylesheet"/>
+</head>
+<body>
+<h1>Табулирование функции</h1><br>
+<table id="mainTable">
+    <tr>
+        <td>
+            <img alt="function" src="function.png" height="100px"/>
+            <form>
+                <h2>По переменной x</h2>
+                <label for="x0">Начало: </label><input class="parameterInput" id="x0" type="text" value="1">
+                <label for="xn">Конец: </label><input class="parameterInput" id="xn" type="text" value="3">
+                <label for="sx">Шаг: </label><input class="parameterInput" id="sx" type="text" value="1"><br>
+
+                <h2>По переменной y</h2>
+                <label for="y0">Начало: </label><input class="parameterInput" id="y0" type="text" value="1">
+                <label for="yn">Конец: </label><input class="parameterInput" id="yn" type="text" value="3">
+                <label for="sy">Шаг: </label><input class="parameterInput" id="sy" type="text" value="1"><br>
+
+                <h2>Параметры функции</h2>
+                <label for="a">a: </label><input class="parameterInput" id="a" type="text" value="1">
+                <label for="nm1">nm1: </label><input class="parameterInput" id="nm1" type="text" value="3">
+                <label for="nm2">nm2: </label><input class="parameterInput" id="nm2" type="text" value="2"><br>
+
+                <input id="tabulationButton" onclick="
+    let xParameters = {
+        begin: parseFloat(form.x0.value),
+        end: parseFloat(form.xn.value),
+        step: parseFloat(form.sx.value)
+    };
+    let yParameters = {
+        begin: parseFloat(form.y0.value),
+        end: parseFloat(form.yn.value),
+        step: parseFloat(form.sy.value)
+    };
+    let functionParameters = {
+        a: parseFloat(form.a.value),
+        nm1: parseFloat(form.nm1.value),
+        nm2: parseFloat(form.nm2.value)
+    };
+    tryTabulation(xParameters, yParameters, functionParameters);" type="button" value="Табулировать">
+            </form>
+        </td>
+        <td>
+            <div id="result"></div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

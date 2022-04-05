@@ -1,0 +1,23 @@
+.parameterInput{
+    margin: 5px;
+    width: 40px;
+}
+
+#tabulationButton{
+    margin: 10px;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+#mainTable{
+}
+
+#mainTable td{
+    padding: 20px;
+    vertical-align: top;
+}
+
+.error{
+    color: red;
+}
