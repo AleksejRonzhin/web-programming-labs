@@ -22,3 +22,11 @@
 .panel{
     margin: 10px;
 }
+
+.rotate{
+    transform: rotate(90deg);
+}
+
+#table{
+    margin: auto;
+}

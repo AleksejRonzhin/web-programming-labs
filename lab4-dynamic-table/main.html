@@ -17,8 +17,8 @@
         </td>
         <td>
             <div class="panel">
-                <form>
-                    <fieldset onchange="fillRedCells(radio.value)">
+                <form id="fillRedCellsForm">
+                    <fieldset onchange="updateTableBody()" >
                         <legend>Красные ячейки</legend>
                         <label>
                             <input type="radio" name="radio" value="sum"/>
@@ -26,7 +26,7 @@
                         <label>
                             <input type="radio" name="radio" value="avg"/>
                         </label>Среднее арифметическое<br>
-                        <button>Сбросить</button>
+                        <button type="button" onclick="resetRedCells()">Сбросить</button>
                     </fieldset>
                 </form>
             </div>
@@ -34,11 +34,11 @@
         <td>
             <div class="panel">
                 <label>Убрать цвет строк<br>
-                    <input type="text">
+                    <input id="removeRowsColorInput" type="text" oninput="updateTableBody()">
                 </label>
             </div>
             <div class="panel">
-                <button>Повернуть на 90 градусов</button>
+                <button type="button" onclick="rotate()">Повернуть на 90 градусов</button>
             </div>
         </td>
     </tr>
