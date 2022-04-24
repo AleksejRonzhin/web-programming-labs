@@ -32,13 +32,14 @@
             </div>
         </td>
         <td>
-            <div class="panel">
+            <div id="removeRowsColorPanel" class="panel">
                 <label>Убрать цвет строк<br>
                     <input id="removeRowsColorInput" type="text" oninput="updateTableBody()">
                 </label>
+                <h2 class="error" id="removeRowsColorError"></h2>
             </div>
             <div class="panel">
-                <button type="button" onclick="rotate()">Повернуть на 90 градусов</button>
+                <button type="button" onclick="rotateArray2()">Повернуть значения</button>
             </div>
         </td>
     </tr>

@@ -1,8 +1,7 @@
 const red = "#dc143c";
 const blue = "#0fffff";
 const empty = "transparent";
-let lastArray;
-let currentRotate = 0;
+let array;
 
 function generateTableDiv() {
     let tableDiv = document.createElement("div");
@@ -29,7 +28,8 @@ function tryConstructTable(size) {
         report(isCorrectCheckResult.message);
         return;
     }
-    constructTable(size);
+    constructTable();
+    array = generateArray(size);
     updateTableBody();
 }
 
@@ -41,20 +41,17 @@ function report(message) {
     tableDiv.appendChild(error);
 }
 
-function constructTable(size) {
+function constructTable() {
     let tableDiv = document.getElementById("tableDiv");
     let table = document.createElement("table");
     table.id = "table";
     let tableBody = document.createElement("tbody");
     tableBody.id = "tableBody";
     table.appendChild(tableBody);
-    let array = generateArray(size);
-    lastArray = array.slice();
-    generateTableCells(tableBody, array);
     tableDiv.appendChild(table);
-    lastArray = array;
 }
 
+// Создания массива специально вида
 function generateArray(size) {
     let array = Array();
     for (let i = 0; i < size; i++) {
@@ -112,20 +109,7 @@ function fillColumn(array, columnIndex, values) {
     }
 }
 
-function generateTableCells(tableBody, array) {
-    for (let i = 0; i < array.length; i++) {
-        let row = document.createElement("tr");
-        for (let j = 0; j < array[i].length; j++) {
-            let cell = document.createElement("td");
-            cell.textContent = array[i][j].value;
-            cell.className = "cell";
-            cell.bgColor = array[i][j].color;
-            row.appendChild(cell);
-        }
-        tableBody.appendChild(row);
-    }
-}
-
+// Проверка значений
 function isIntegerSize(size) {
     if (!isNumeric(size)) {
         return {
@@ -140,7 +124,7 @@ function isIntegerSize(size) {
     return {result: true};
 }
 
-function isInteger(value){
+function isInteger(value) {
     return (value % 1 === 0);
 }
 
@@ -166,30 +150,84 @@ function isCorrectSize(size) {
 function updateTableBody() {
     let tableBody = document.getElementById("tableBody");
     tableBody.innerHTML = "";
-    generateTableCells(tableBody, lastArray);
+    generateTableCells(tableBody, array);
     applyEffects();
 }
 
-function applyEffects(){
+function generateTableCells(tableBody, array) {
+    for (let i = 0; i < array.length; i++) {
+        let row = document.createElement("tr");
+        for (let j = 0; j < array[i].length; j++) {
+            let cell = document.createElement("td");
+            cell.textContent = array[i][j].value;
+            cell.className = "cell";
+            cell.bgColor = array[i][j].color;
+            row.appendChild(cell);
+        }
+        tableBody.appendChild(row);
+    }
+}
+
+function applyEffects() {
     tryRemoveRowsColor();
     tryFillRedCells();
 }
 
-function tryRemoveRowsColor(){
+function tryRemoveRowsColor() {
     let input = document.getElementById("removeRowsColorInput");
     let rows = getSelectedRows(input.value);
-    removeRowsColor(rows);
+    let checkResult = checkRows(rows);
+    if(!checkResult.result){
+        removeRowsColorReport(checkResult.message);
+    } else {
+        let error = document.getElementById("removeRowsColorError");
+        error.textContent = "";
+        removeRowsColor(rows);
+    }
+}
+
+function removeRowsColorReport(message){
+    let error = document.getElementById("removeRowsColorError");
+    error.textContent = message;
+    error.className = "error";
 }
 
 function getSelectedRows(value) {
-    let rows = value.split(",");
-    rows = rows.map(num => parseFloat(num));
-    rows = rows.filter(isInteger);
-    return rows;
+    return value.split(",");
+}
+
+function checkRows(rows) {
+    let tableSizeInput = document.getElementById("tableSize");
+    for (let i = 0; i < rows.length; i++) {
+        let row = rows[i].trim();
+        if (row.split(" ").length !== 1) {
+            return {
+                result: false, message: "Значения нужно вводить через запятую"
+            }
+        }
+        if (!isInteger(row)) {
+            return {
+                result: false, message: "Значения строк должны быть целочисленными"
+            }
+        }
+        if (row < 0){
+            return {
+                result: false, message: "Значения строк должны быть неотрицательными"
+            }
+        }
+        if(row >= tableSizeInput.value){
+            return {
+                result: false, message: "Значение строки слишком большое"
+            }
+        }
+    }
+    return {result: true}
 }
 
 function removeRowsColor(removeColorRows) {
     let rows = document.getElementById("tableDiv").getElementsByTagName("tr");
+    removeColorRows = removeColorRows.map(num => parseFloat(num));
+    removeColorRows = removeColorRows.filter(isInteger);
     for (let r = 0; r < removeColorRows.length; r++) {
         for (let i = 0; i < rows.length; ++i) {
             if (i === removeColorRows[r]) {
@@ -202,7 +240,7 @@ function removeRowsColor(removeColorRows) {
     }
 }
 
-function tryFillRedCells(){
+function tryFillRedCells() {
     let form = document.getElementById("fillRedCellsForm");
     if (form.radio.value !== "") {
         fillRedCells(form.radio.value);
@@ -228,9 +266,9 @@ function getValue(aggregate) {
 
 function getSum() {
     let sum = 0;
-    for (let i = 0; i < lastArray.length; i++) {
-        for (let j = 0; j < lastArray[i].length; j++) {
-            let cell = lastArray[i][j];
+    for (let i = 0; i < array.length; i++) {
+        for (let j = 0; j < array[i].length; j++) {
+            let cell = array[i][j];
             if (cell.color !== empty) {
                 sum += cell.value;
             }
@@ -241,9 +279,9 @@ function getSum() {
 
 function getCount() {
     let count = 0;
-    for (let i = 0; i < lastArray.length; i++) {
-        for (let j = 0; j < lastArray[i].length; j++) {
-            let cell = lastArray[i][j];
+    for (let i = 0; i < array.length; i++) {
+        for (let j = 0; j < array[i].length; j++) {
+            let cell = array[i][j];
             if (cell.color !== empty) {
                 count += 1;
             }
@@ -264,9 +302,49 @@ function resetRedCells() {
     updateTableBody();
 }
 
-function rotate(){
-    let table = document.getElementById("table");
-    currentRotate += 90;
-    currentRotate %= 360;
-    table.style.transform = "rotate(" + currentRotate + "deg)";
+function rotateArray() {
+    let newArray = Array();
+    for (let i = 0; i < array.length; i++) {
+        let row = Array();
+        for (let j = 0; j < array[i].length; j++) {
+            row.push(array[array[i].length - j - 1][i]);
+        }
+        newArray.push(row);
+    }
+    array = newArray;
+    updateTableBody();
+}
+
+function rotateArray2(){
+    let tableBody = document.getElementById("tableBody");
+    let rows = tableBody.getElementsByTagName("tr");
+    let newArray = Array();
+    for(let i = 0; i < rows.length; i++){
+        let arrayRow = Array();
+        let row = rows[i];
+        let values = row.getElementsByTagName("td");
+        for(let i = 0; i < values.length; i++){
+            arrayRow.push(values[i]);
+        }
+        newArray.push(arrayRow);
+    }
+    console.log(newArray);
+
+    let newArray2 = Array();
+    for (let i = 0; i < newArray.length; i++) {
+        let row = Array();
+        for (let j = 0; j < newArray[i].length; j++) {
+            row.push(newArray[newArray[i].length - j - 1][i]);
+        }
+        newArray2.push(row);
+    }
+
+    tableBody.innerHTML = "";
+    for (let i = 0; i < newArray2.length; i++) {
+        let row = document.createElement("tr");
+        for (let j = 0; j < array[i].length; j++) {
+            row.appendChild(newArray2[i][j]);
+        }
+        tableBody.appendChild(row);
+    }
 }
