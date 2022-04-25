@@ -1,9 +1,10 @@
 
-#mainTable{
+.mainTable{
     margin: auto;
+    border: 0;
 }
 
-#mainTable td{
+.mainTable td{
     padding: 20px;
     vertical-align: top;
     text-align: center;
@@ -25,23 +26,17 @@
     margin: auto;
 }
 
-#arrayM1Container table td{
+
+.arrayContainer table td{
     padding: 5px;
     border: 1px solid black;
     border-collapse: collapse;
 }
 
-#arrayM2Container table td{
-    padding: 5px;
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-
-#result table td{
-    padding: 5px;
-    border: 1px solid black;
-    border-collapse: collapse;
-}
 .panel{
-    margin: 10px;
+    margin: 20px;
+}
+
+#checkedArrays > td{
+    border: 0;
 }

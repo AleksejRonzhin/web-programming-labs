@@ -7,34 +7,34 @@
     <link href="stylesheet.css" rel="stylesheet"/>
 </head>
 <body onload="onChangeM1(); onChangeM2()">
-<table id="mainTable">
+<table class="mainTable">
     <tbody>
     <tr>
         <td>
             <div class="panel">
-                <label>М1:<input class="parameterInput" id="widthM1" oninput="onChangeM1()" type="text" value="6"/>х
-                    <input class="parameterInput" id="heightM1" oninput="onChangeM1()" type="text" value="6"/></label>
+                <label>М1:<input class="parameterInput" id="widthM1" oninput="onChangeM1()" type="text" value="3"/>х
+                    <input class="parameterInput" id="heightM1" oninput="onChangeM1()" type="text" value="3"/></label>
                 <br>
-                <label>[<input class="parameterInput" id="minValueM1" oninput="onChangeM1()" type="text" value="0"/>,
-                    <input class="parameterInput" id="maxValueM1" oninput="onChangeM1()" type="text"
-                           value="16"/>]</label>
-                <div id="arrayM1Container"></div>
+                <label>[<input class="parameterInput" id="firstSymbolM1" oninput="onChangeM1()" type="text" value="a"/>,
+                    <input class="parameterInput" id="lastSymbolM1" oninput="onChangeM1()" type="text"
+                           value="z"/>]</label>
+                <div id="arrayM1Container" class="arrayContainer"></div>
             </div>
         </td>
         <td>
             <div class="panel">
-                <label>М2:<input class="parameterInput" id="widthM2" oninput="onChangeM2()" type="text" value="6"/>х
-                    <input class="parameterInput" id="heightM2" oninput="onChangeM2()" type="text" value="6"/></label>
+                <label>М2:<input class="parameterInput" id="widthM2" oninput="onChangeM2()" type="text" value="3"/>х
+                    <input class="parameterInput" id="heightM2" oninput="onChangeM2()" type="text" value="2"/></label>
                 <br>
-                <label>[<input class="parameterInput" id="minValueM2" oninput="onChangeM2()" type="text" value="0"/>,
-                    <input class="parameterInput" id="maxValueM2" oninput="onChangeM2()" type="text"
-                           value="16"/>]</label>
-                <div id="arrayM2Container"></div>
+                <label>[<input class="parameterInput" id="firstSymbolM2" oninput="onChangeM2()" type="text" value="b"/>,
+                    <input class="parameterInput" id="lastSymbolM2" oninput="onChangeM2()" type="text"
+                           value="v"/>]</label>
+                <div id="arrayM2Container" class="arrayContainer"></div>
             </div>
         </td>
     </tr>
     </tbody>
 </table>
-<div id="result"></div>
+<div id="result" class="arrayContainer"></div>
 </body>
 </html>
