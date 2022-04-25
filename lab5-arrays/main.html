@@ -2,13 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dynamic table</title>
+    <title>Arrays</title>
     <script src="arrays.js"></script>
     <link href="stylesheet.css" rel="stylesheet"/>
 </head>
-<body>
-<script>
-    console.log(checkVector(['a', 'b', 'q', 'd']));
-</script>
+<body onload="onChangeM1(); onChangeM2()">
+<table id="mainTable">
+    <tbody>
+    <tr>
+        <td>
+            <div class="panel">
+                <label>М1:<input class="parameterInput" id="widthM1" oninput="onChangeM1()" type="text" value="6"/>х
+                    <input class="parameterInput" id="heightM1" oninput="onChangeM1()" type="text" value="6"/></label>
+                <br>
+                <label>[<input class="parameterInput" id="minValueM1" oninput="onChangeM1()" type="text" value="0"/>,
+                    <input class="parameterInput" id="maxValueM1" oninput="onChangeM1()" type="text"
+                           value="16"/>]</label>
+                <div id="arrayM1Container"></div>
+            </div>
+        </td>
+        <td>
+            <div class="panel">
+                <label>М2:<input class="parameterInput" id="widthM2" oninput="onChangeM2()" type="text" value="6"/>х
+                    <input class="parameterInput" id="heightM2" oninput="onChangeM2()" type="text" value="6"/></label>
+                <br>
+                <label>[<input class="parameterInput" id="minValueM2" oninput="onChangeM2()" type="text" value="0"/>,
+                    <input class="parameterInput" id="maxValueM2" oninput="onChangeM2()" type="text"
+                           value="16"/>]</label>
+                <div id="arrayM2Container"></div>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div id="result"></div>
 </body>
 </html>
