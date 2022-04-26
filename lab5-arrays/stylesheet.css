@@ -26,6 +26,10 @@
     margin: auto;
 }
 
+.arrayDiv{
+    margin: 20px;
+}
+
 
 .arrayContainer table td{
     padding: 5px;
@@ -39,4 +43,9 @@
 
 #checkedArrays > td{
     border: 0;
+}
+
+.textDiv{
+    margin: auto;
+    text-align: center;
 }

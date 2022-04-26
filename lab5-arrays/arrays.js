@@ -7,44 +7,62 @@ const firstAlphabetSymbol = 'a';
 const lastAlphabetSymbol = 'z';
 
 function onChangeM1() {
-    let widthM1 = document.getElementById("widthM1").value;
-    let heightM1 = document.getElementById("heightM1").value;
+    let rowCountM1 = document.getElementById("rowCountM1").value;
+    let colCountM1 = document.getElementById("colCountM1").value;
     let firstSymbolM1 = document.getElementById("firstSymbolM1").value;
     let lastSymbolM1 = document.getElementById("lastSymbolM1").value;
 
-    arrayM1 = generateArray(widthM1, heightM1, firstSymbolM1, lastSymbolM1);
+    arrayM1 = generateArray(rowCountM1, colCountM1, firstSymbolM1, lastSymbolM1);
     checkArrays();
 }
 
 function onChangeM2() {
-    let widthM2 = document.getElementById("widthM2").value;
-    let heightM2 = document.getElementById("heightM2").value;
+    let rowCountM2 = document.getElementById("rowCountM2").value;
+    let colCountM2 = document.getElementById("colCountM2").value;
     let firstSymbolM2 = document.getElementById("firstSymbolM2").value;
     let lastSymbolM2 = document.getElementById("lastSymbolM2").value;
 
-    arrayM2 = generateArray(widthM2, heightM2, firstSymbolM2, lastSymbolM2);
+    arrayM2 = generateArray(rowCountM2, colCountM2, firstSymbolM2, lastSymbolM2);
     checkArrays();
 }
 
-function generateArray(width, height, firstSymbol, lastSymbol) {
-    function getRandomValue(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min; //Максимум и минимум включаются
-    }
-
+function generateArray(rowCount, colCount, firstSymbol, lastSymbol) {
     let minValue = firstSymbol.charCodeAt(0);
     let maxValue = lastSymbol.charCodeAt(0);
-
     let array = [];
-    for (let i = 0; i < width; i++) {
-        let row = [];
-        for (let j = 0; j < height; j++) {
-            row.push({
-                value: String.fromCharCode(getRandomValue(parseInt(minValue), parseInt(maxValue))), color: empty
-            });
-        }
-        array.push(row);
+    for (let i = 0; i < rowCount; i++) {
+        array.push(generateRow(minValue, maxValue, colCount));
     }
     return array;
+}
+
+function generateRow(minValue, maxValue, colCount) {
+    if (Math.random() < 0.5) {
+        return getGoodRow(minValue, maxValue, colCount);
+    }
+    let row = [];
+    for (let j = 0; j < colCount; j++) {
+        row.push({
+            value: String.fromCharCode(getRandomValue(minValue, maxValue)), color: empty
+        });
+    }
+    return row;
+}
+
+function getGoodRow(minValue, maxValue, size) {
+    let min = minValue;
+    let max = maxValue;
+    let row = [];
+    while (row.length < size) {
+        let value = getRandomValue(min, max);
+        row.push({value: String.fromCharCode(value), color: empty})
+        min = value;
+    }
+    return row;
+}
+
+function getRandomValue(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min; //Максимум и минимум включаются
 }
 
 function showArray(array, container) {
@@ -80,73 +98,106 @@ function convertVectorToRow(vector) {
 function checkArrays() {
     let resultContainer = document.getElementById("result");
     resultContainer.innerHTML = "";
-    arrayM1.forEach((item) => item.forEach((item) => item.color = empty));
-    arrayM2.forEach((item) => item.forEach((item) => item.color = empty));
+
+    if(arrayM1.length === 0 && arrayM2.length === 0){
+        return;
+    }
+    showText(resultContainer, "Исходные массивы:");
     showArrays(resultContainer, arrayM1, arrayM2);
 
-
-    arrayM1.forEach((item) => item.forEach((item) => item.color = green));
-    arrayM2.forEach((item) => item.forEach((item) => item.color = green));
-
-
-    let badVectors = getBadVectors(arrayM1).concat(getBadVectors(arrayM2));
-    fillBadRows(badVectors);
-
-    let badElements = badVectors.flat().map((item) => {
-        return {value: item.value, color: empty}
-    });
-
-    showResults(arrayM1, arrayM2, badElements);
-}
-
-
-function showResults(checkedArrayM1, checkedArrayM2, badElements) {
-    let resultContainer = document.getElementById("result");
-
+    let checkedArrayM1 = arrayClone(arrayM1);
+    let checkedArrayM2 = arrayClone(arrayM2);
+    let badVectors = getBadVectors(checkedArrayM1).concat(getBadVectors(checkedArrayM2));
+    colorizeArrays(checkedArrayM1, checkedArrayM2, badVectors);
+    showText(resultContainer, "Анализ строк на упорядоченность:");
     showArrays(resultContainer, checkedArrayM1, checkedArrayM2);
 
-    resultContainer.append(convertVectorToArray(badElements));
+    let badElements = badVectors.flat();
+    if(badElements.length === 0){
+        return;
+    }
+    removeColorVector(badElements);
+    showText(resultContainer, "Вектор элементов неупорядочных строк:");
+    showElements(resultContainer, badElements);
 
-    badElements.forEach((item) => {
-        item.color = red;
-    })
-    let oddBadElements = badElements.filter((item) => {
-        return item.value.charCodeAt(0) % 2 !== firstAlphabetSymbol.charCodeAt(0) % 2;
-    });
-    oddBadElements.forEach((item) => {
-        item.color = green;
-    });
+    let oddBadElements = getOddBadElements(badElements);
+    colorizeVector(badElements, oddBadElements);
+    showText(resultContainer, "Анализ элементов на четность позиции в алфавите:");
+    showElements(resultContainer, badElements);
 
-    resultContainer.append(convertVectorToArray(badElements));
-    resultContainer.append(convertVectorToArray(oddBadElements.map((item) => {
-        return {value: item.value, color: empty}
-    })));
+    if(oddBadElements.length === 0){
+        return;
+    }
+    removeColorVector(oddBadElements);
+    showText(resultContainer, "Вектор элементов четной позиции в алфавите:");
+    showElements(resultContainer, oddBadElements);
 
-    let sortedVector = oddBadElements.sort((a, b) => {
-        return (a.value.charCodeAt(0) - b.value.charCodeAt(0));
-    });
-    resultContainer.append(convertVectorToArray(sortedVector.map((item) => {
-        return {value: item.value, color: empty}
-    })));
-
+    let sortedVector = getSortedVector(oddBadElements);
+    showText(resultContainer, "Отсортированный вектор:");
+    showElements(resultContainer, sortedVector);
 }
 
-function showArrays(container, arrayM1, arrayM2){
-    let div = document.createElement("div");
-    div.className = "panel";
-    let table = document.createElement("table");
-    table.className = "mainTable";
-    let row = document.createElement("tr");
-    row.id = "checkedArrays";
-    let cell = document.createElement("td");
-    showArray(arrayM1, cell);
-    row.append(cell);
-    cell = document.createElement("td");
-    showArray(arrayM2, cell);
-    row.append(cell);
-    table.append(row);
-    div.append(table);
-    container.append(div);
+function getBadVectors(array) {
+    return array.filter(isNotSortedVector);
+}
+
+function isNotSortedVector(vector) {
+    return !vector.every((item, index, array) => {
+        return index + 1 === array.length || item.value <= array[index + 1].value;
+    });
+}
+
+function getSortedVector(vector) {
+    return vector.sort((a, b) => {
+        return (a.value.charCodeAt(0) - b.value.charCodeAt(0));
+    });
+}
+
+function colorizeVector(elements, oddElements) {
+    elements.forEach((item) => {
+        item.color = red;
+    });
+    oddElements.forEach((item) => {
+        item.color = green;
+    });
+}
+
+function getOddBadElements(badElements) {
+    return badElements.filter((item) => {
+        return item.value.charCodeAt(0) % 2 !== firstAlphabetSymbol.charCodeAt(0) % 2;
+    });
+}
+
+function showElements(container, elements) {
+    container.append(convertVectorToArray(elements));
+}
+
+function removeColorVector(vector) {
+    vector.forEach((item) => item.color = empty);
+}
+
+function colorizeArrays(checkedArrayM1, checkedArrayM2, badVectors) {
+    checkedArrayM1.forEach((item) => item.forEach((item) => item.color = green));
+    checkedArrayM2.forEach((item) => item.forEach((item) => item.color = green));
+    fillBadRows(badVectors);
+}
+
+function fillBadRows(badVectors) {
+    badVectors.forEach((item) => (item.forEach((item) => {
+        item.color = red
+    })));
+}
+
+function arrayClone(source) {
+    let clone = [];
+    source.forEach((item) => {
+        let row = [];
+        item.forEach((item) => {
+            row.push({value: item.value, color: item.color});
+        })
+        clone.push(row);
+    })
+    return clone;
 }
 
 function convertVectorToArray(vector) {
@@ -161,18 +212,28 @@ function convertVectorToArray(vector) {
     return tableDiv;
 }
 
-function getBadVectors(array) {
-    return array.filter(isNotSortedVector);
+function showArrays(container, arrayM1, arrayM2) {
+    let table = document.createElement("table");
+    table.className = "mainTable";
+    let row = document.createElement("tr");
+    row.id = "checkedArrays";
+    let cell = document.createElement("td");
+    showArray(arrayM1, cell);
+    row.append(cell);
+    cell = document.createElement("td");
+    showArray(arrayM2, cell);
+    row.append(cell);
+    table.append(row);
+    container.append(table);
 }
 
-function isNotSortedVector(vector) {
-    return !vector.every((item, index, array) => {
-        return index + 1 === array.length || item.value <= array[index + 1].value;
-    });
+function showText(container, text) {
+    container.append(getTextDiv(text));
 }
 
-function fillBadRows(badVectors) {
-    badVectors.forEach((item) => (item.forEach((item) => {
-        item.color = red
-    })));
+function getTextDiv(text) {
+    let div = document.createElement("div");
+    div.append(text);
+    div.className = "textDiv";
+    return div;
 }
