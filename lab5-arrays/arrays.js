@@ -12,7 +12,9 @@ function onChangeM1() {
     let firstSymbolM1 = document.getElementById("firstSymbolM1").value;
     let lastSymbolM1 = document.getElementById("lastSymbolM1").value;
 
-    arrayM1 = generateArray(rowCountM1, colCountM1, firstSymbolM1, lastSymbolM1);
+
+    let errorDiv = document.getElementById("arrayM1ErrorDiv");
+    arrayM1 = tryGenerateArray(rowCountM1, colCountM1, firstSymbolM1, lastSymbolM1, errorDiv);
     checkArrays();
 }
 
@@ -22,8 +24,141 @@ function onChangeM2() {
     let firstSymbolM2 = document.getElementById("firstSymbolM2").value;
     let lastSymbolM2 = document.getElementById("lastSymbolM2").value;
 
-    arrayM2 = generateArray(rowCountM2, colCountM2, firstSymbolM2, lastSymbolM2);
+
+    let errorDiv = document.getElementById("arrayM2ErrorDiv");
+    arrayM2 = tryGenerateArray(rowCountM2, colCountM2, firstSymbolM2, lastSymbolM2, errorDiv);
     checkArrays();
+}
+
+function tryGenerateArray(rowCount, colCount, firstSymbol, lastSymbol, errorContainer) {
+    let array = [];
+    let result = checkParameters(rowCount, colCount, firstSymbol, lastSymbol);
+    errorContainer.innerHTML = "";
+    if (result.result) {
+        array = generateArray(rowCount, colCount, firstSymbol, lastSymbol);
+    } else {
+        result.messages.forEach((message) => {
+            let error = document.createElement("h2");
+            error.textContent = message;
+            error.className = "error";
+            errorContainer.append(error);
+        })
+
+    }
+    checkArrays();
+    return array;
+}
+
+
+function checkParameters(rowCount, colCount, firstSymbol, lastSymbol) {
+    let result = true;
+    let messages = [];
+    let checkRowCountResult = checkRowCount(rowCount);
+    if (!checkRowCountResult.result) {
+        result = false;
+        messages.push(checkRowCountResult.message);
+    }
+
+    let checkColCountResult = checkColCount(colCount);
+    if (!checkColCountResult.result) {
+        result = false;
+        messages.push(checkColCountResult.message);
+    }
+
+    let checkFirstSymbolResult = checkFirstSymbol(firstSymbol);
+    if (!checkFirstSymbolResult.result) {
+        result = false;
+        messages.push(checkFirstSymbolResult.message);
+    }
+
+    let checkLastSymbolResult = checkLastSymbol(lastSymbol);
+    if(!checkLastSymbolResult.result){
+        result = false;
+        messages.push(checkLastSymbolResult.message);
+    }
+
+    if (checkFirstSymbolResult.result && checkLastSymbolResult.result && lastSymbol < firstSymbol) {
+        result = false;
+        messages.push("Левая граница диапазона больше правой");
+    }
+
+    return {result: result, messages: messages};
+}
+
+function checkRowCount(rowCount) {
+    if (!isNumeric(rowCount)) {
+        return {
+            result: false, message: "Количество строк не число!"
+        }
+    }
+    if (!isInteger(rowCount)) {
+        return {
+            result: false, message: "Количество строк не целое число!"
+        }
+    }
+    if (rowCount < 1 || rowCount > 50) {
+        return {
+            result: false, message: "Количество строк должно лежать в [1, 50]!"
+        }
+    }
+    return {result: true};
+}
+
+function checkColCount(colCount) {
+    if (!isNumeric(colCount)) {
+        return {
+            result: false, message: "Количество столбцов не число!"
+        }
+    }
+    if (!isInteger(colCount)) {
+        return {
+            result: false, message: "Количество столбцов не целое число!"
+        }
+    }
+    if (colCount < 1 || colCount > 50) {
+        return {
+            result: false, message: "Количество столбцов должно лежать в [1, 50]!"
+        }
+    }
+    return {result: true};
+}
+
+function checkFirstSymbol(firstSymbol) {
+    if (firstSymbol.length !== 1) {
+        return {
+            result: false, message: "Левая граница диапазона введена некорректно"
+        }
+    }
+    if (firstSymbol < firstAlphabetSymbol || firstSymbol > lastAlphabetSymbol) {
+        return {
+            result: false, message: "Левая граница диапазона не принадлежит алфавиту"
+        }
+    }
+    return {result: true};
+}
+
+function checkLastSymbol(lastSymbol) {
+    if (lastSymbol.length !== 1) {
+        return {
+            result: false, message: "Правая граница диапазона введена некорректно"
+        }
+    }
+    if (lastSymbol < firstAlphabetSymbol || lastSymbol > lastAlphabetSymbol) {
+        return {
+            result: false, message: "Правая граница диапазона не принадлежит алфавиту"
+        }
+    }
+    return {result: true};
+}
+
+
+
+function isInteger(value) {
+    return (value % 1 === 0);
+}
+
+function isNumeric(value) {
+    return !isNaN(parseFloat(value)) && isFinite(value);
 }
 
 function generateArray(rowCount, colCount, firstSymbol, lastSymbol) {
@@ -99,7 +234,7 @@ function checkArrays() {
     let resultContainer = document.getElementById("result");
     resultContainer.innerHTML = "";
 
-    if(arrayM1.length === 0 && arrayM2.length === 0){
+    if (arrayM1.length === 0 && arrayM2.length === 0) {
         return;
     }
     showText(resultContainer, "Исходные массивы:");
@@ -113,7 +248,7 @@ function checkArrays() {
     showArrays(resultContainer, checkedArrayM1, checkedArrayM2);
 
     let badElements = badVectors.flat();
-    if(badElements.length === 0){
+    if (badElements.length === 0) {
         return;
     }
     removeColorVector(badElements);
@@ -125,7 +260,7 @@ function checkArrays() {
     showText(resultContainer, "Анализ элементов на четность позиции в алфавите:");
     showElements(resultContainer, badElements);
 
-    if(oddBadElements.length === 0){
+    if (oddBadElements.length === 0) {
         return;
     }
     removeColorVector(oddBadElements);

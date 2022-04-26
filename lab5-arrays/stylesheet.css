@@ -49,3 +49,6 @@
     margin: auto;
     text-align: center;
 }
+.error{
+    color: red;
+}
