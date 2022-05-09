@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Arrays</title>
+    <script src="objects.js"></script>
+    <link href="stylesheet.css" rel="stylesheet"/>
+</head>
+<body>
+<table class="mainTable">
+    <tbody>
+    <tr>
+        <td>
+            <div class="panel">
+                <label>Количество сотрудников:
+                    <input id="n" type="text" class="parameterInput">
+                </label>
+                <button onclick="generateEmployees(n.value)">Сгенерировать значения</button>
+            </div>
+        </td>
+        <td>
+            <div class="panel">
+                <label>JSON:
+                    <input id="str" type="text"/>
+                    <button onclick="loadJSON(str.value)">Загрузить</button>
+                </label>
+                <button onclick="uploadJSON()">Выгрузить</button>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <table id="employeesTable">
+
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

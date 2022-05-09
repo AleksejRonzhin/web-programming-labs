@@ -12,7 +12,6 @@ function onChangeM1() {
     let firstSymbolM1 = document.getElementById("firstSymbolM1").value;
     let lastSymbolM1 = document.getElementById("lastSymbolM1").value;
 
-
     let errorDiv = document.getElementById("arrayM1ErrorDiv");
     arrayM1 = tryGenerateArray(rowCountM1, colCountM1, firstSymbolM1, lastSymbolM1, errorDiv);
     checkArrays();
@@ -23,7 +22,6 @@ function onChangeM2() {
     let colCountM2 = document.getElementById("colCountM2").value;
     let firstSymbolM2 = document.getElementById("firstSymbolM2").value;
     let lastSymbolM2 = document.getElementById("lastSymbolM2").value;
-
 
     let errorDiv = document.getElementById("arrayM2ErrorDiv");
     arrayM2 = tryGenerateArray(rowCountM2, colCountM2, firstSymbolM2, lastSymbolM2, errorDiv);
@@ -49,7 +47,6 @@ function tryGenerateArray(rowCount, colCount, firstSymbol, lastSymbol, errorCont
     return array;
 }
 
-
 function checkParameters(rowCount, colCount, firstSymbol, lastSymbol) {
     let result = true;
     let messages = [];
@@ -72,7 +69,7 @@ function checkParameters(rowCount, colCount, firstSymbol, lastSymbol) {
     }
 
     let checkLastSymbolResult = checkLastSymbol(lastSymbol);
-    if(!checkLastSymbolResult.result){
+    if (!checkLastSymbolResult.result) {
         result = false;
         messages.push(checkLastSymbolResult.message);
     }
@@ -152,7 +149,6 @@ function checkLastSymbol(lastSymbol) {
 }
 
 
-
 function isInteger(value) {
     return (value % 1 === 0);
 }
@@ -164,10 +160,11 @@ function isNumeric(value) {
 function generateArray(rowCount, colCount, firstSymbol, lastSymbol) {
     let minValue = firstSymbol.charCodeAt(0);
     let maxValue = lastSymbol.charCodeAt(0);
-    let array = [];
-    for (let i = 0; i < rowCount; i++) {
-        array.push(generateRow(minValue, maxValue, colCount));
-    }
+    let array = new Array(parseInt(rowCount));
+    array.fill(0);
+    array.forEach((item, index, array) => {
+        array[index] = generateRow(minValue, maxValue, colCount);
+    })
     return array;
 }
 
@@ -175,12 +172,11 @@ function generateRow(minValue, maxValue, colCount) {
     if (Math.random() < 0.5) {
         return getGoodRow(minValue, maxValue, colCount);
     }
-    let row = [];
-    for (let j = 0; j < colCount; j++) {
-        row.push({
-            value: String.fromCharCode(getRandomValue(minValue, maxValue)), color: empty
-        });
-    }
+    let row = new Array(parseInt(colCount));
+    row.fill(0);
+    row.forEach((item, index, array) => {
+        array[index] = {value: String.fromCharCode(getRandomValue(minValue, maxValue)), color: empty}
+    })
     return row;
 }
 
