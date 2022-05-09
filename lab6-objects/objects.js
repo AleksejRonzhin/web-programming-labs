@@ -11,12 +11,41 @@ const mobileOperators = [{name: "Билайн", code: "905"}, {name: "МТС", c
 
 
 function generateEmployees(n) {
+    if (!isNumeric(n)) {
+        window.alert("Введеное значение количества сотрудников не число!");
+        document.getElementById("n").value = employees.length;
+        return;
+    }
+    if (!isInteger(n)) {
+        window.alert("Введеное значение количества сотрудников не целое число!");
+        document.getElementById("n").value = employees.length;
+        return;
+    }
+    if (n < 1) {
+        window.alert("Введеное значение количества сотрудников меньше 1!");
+        document.getElementById("n").value = employees.length;
+        return;
+    }
+    if (n > 50) {
+        window.alert("Введеное значение количества сотрудников больше 50!");
+        document.getElementById("n").value = employees.length;
+        return;
+    }
+
     employees = [];
     for (let i = 0; i < n; i++) {
         let employee = generateEmployee();
         employees.push(employee);
     }
     updateTable(employees);
+}
+
+function isNumeric(value) {
+    return !isNaN(parseFloat(value)) && isFinite(value);
+}
+
+function isInteger(value) {
+    return (value % 1 === 0);
 }
 
 function generateEmployee() {
@@ -51,14 +80,21 @@ function generateEmployee() {
 function updateTable(employees) {
     let table = document.getElementById("employeesTable");
     printTable(table, employees);
-    if (n.value > 0) {
+
+    if (employees.length > 0) {
         document.getElementById("findEmployees").hidden = false;
         document.getElementById("findEmployeesTable").innerText = "";
+    } else {
+        document.getElementById("findEmployees").hidden = true;
     }
 }
 
 function printTable(container, employees) {
     container.innerText = "";
+    if(employees.length === 0){
+        container.append("Сотрудников не найдено");
+        return;
+    }
     let tableBody = document.createElement("tbody");
 
     let employeesHasOperators = employees.some((employee) => employee.hasOwnProperty("operator"));
@@ -162,9 +198,17 @@ function getRow(employee, employeesHasOperators) {
     }
 
     function appendBirthDate(row, birthDate) {
+        const getTwoDigitNumber = (number) => {
+            if(number.toString().length === 1){
+                return `0${number}`;
+            } else {
+                return number;
+            }
+        }
+
         let cell = document.createElement("td");
         if (birthDate) {
-            cell.textContent = `${birthDate.day}.${birthDate.month}.${birthDate.year}`
+            cell.textContent = `${getTwoDigitNumber(birthDate.day)}.${getTwoDigitNumber(birthDate.month)}.${birthDate.year}`
         }
         row.append(cell);
     }
@@ -205,12 +249,10 @@ function getRow(employee, employeesHasOperators) {
 }
 
 function findEmployees() {
-    let orgName = document.getElementById("orgName").value;
-    let position = document.getElementById("position").value;
-    let minExperience = document.getElementById("minExperience").value;
-    let maxExperience = document.getElementById("maxExperience").value;
-
-    // Проверка значений
+    let orgName = document.getElementById("orgName").value.trim();
+    let position = document.getElementById("position").value.trim();
+    let minExperience = document.getElementById("minExperience").value.trim();
+    let maxExperience = document.getElementById("maxExperience").value.trim();
 
     let filterEmployees = employees;
     if (orgName) {
@@ -225,18 +267,89 @@ function findEmployees() {
         }))
     }
 
-    if (minExperience || maxExperience) {
+    if (maxExperience) {
+        if (!isNumeric(maxExperience)) {
+            window.alert("Введеное значение максимального стажа не число!");
+            document.getElementById("maxExperience").value = "";
+            return;
+        }
+        if (!isInteger(maxExperience)) {
+            window.alert("Введеное значение максимального стажа не целое число!");
+            document.getElementById("maxExperience").value = "";
+            return;
+        }
+        if (maxExperience < 0) {
+            window.alert("Введеное значение максимального стажа слишком маленькое!");
+            document.getElementById("maxExperience").value = "";
+            return;
+        }
+        if (maxExperience > 20) {
+            window.alert("Введеное значение максимального стажа слишком большое!");
+            document.getElementById("maxExperience").value = "";
+            return;
+        }
+
         filterEmployees = filterEmployees.filter((value => {
-            return value.workPlace.experience >= minExperience && value.workPlace.experience <= maxExperience;
+            return value.workPlace.experience <= maxExperience;
         }))
     }
 
+    if (minExperience) {
+        if (!isNumeric(minExperience)) {
+            window.alert("Введеное значение минимального стажа не число!");
+            document.getElementById("minExperience").value = "";
+            return;
+        }
+        if (!isInteger(minExperience)) {
+            window.alert("Введеное значение минимального стажа не целое число!");
+            document.getElementById("minExperience").value = "";
+            return;
+        }
+        if (minExperience < 0) {
+            window.alert("Введеное значение минимального стажа слишком маленькое!");
+            document.getElementById("minExperience").value = "";
+            return;
+        }
+        if (minExperience > 20) {
+            window.alert("Введеное значение минимального стажа слишком большое!");
+            document.getElementById("minExperience").value = "";
+            return;
+        }
+
+        filterEmployees = filterEmployees.filter((value => {
+            return value.workPlace.experience >= minExperience;
+        }))
+    }
 
     let table = document.getElementById("findEmployeesTable");
     printTable(table, filterEmployees);
 }
 
 function removeBirthDateInfo(minExperience) {
+    if (!isNumeric(minExperience)) {
+        window.alert("Введеное значение стажа не число!");
+        document.getElementById("minValue").value = "";
+        return;
+    }
+
+    if (!isInteger(minExperience)) {
+        window.alert("Введеное значение стажа не целое число!");
+        document.getElementById("minValue").value = "";
+        return;
+    }
+
+    if (minExperience < 0) {
+        window.alert("Введеное значение стажа слишком маленькое!");
+        document.getElementById("minValue").value = "";
+        return;
+    }
+
+    if (minExperience > 20) {
+        window.alert("Введеное значение стажа слишком большое!");
+        document.getElementById("minValue").value = "";
+        return;
+    }
+
     employees.forEach((employee => {
         if (employee.workPlace.experience < minExperience) {
             delete employee.birthDate;

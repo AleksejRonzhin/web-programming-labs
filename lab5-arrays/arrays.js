@@ -148,7 +148,6 @@ function checkLastSymbol(lastSymbol) {
     return {result: true};
 }
 
-
 function isInteger(value) {
     return (value % 1 === 0);
 }
