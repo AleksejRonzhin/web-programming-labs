@@ -11,26 +11,71 @@
     <tbody>
     <tr>
         <td>
-            <div class="panel">
-                <label>Количество сотрудников:
-                    <input id="n" type="text" class="parameterInput">
-                </label>
-                <button onclick="generateEmployees(n.value)">Сгенерировать значения</button>
-            </div>
+            <label>Количество сотрудников:
+                <input class="parameterInput" id="n" type="text">
+            </label>
+            <button onclick="generateEmployees(n.value)">Сгенерировать значения</button>
+
         </td>
         <td>
-            <div class="panel">
-                <label>JSON:
-                    <input id="str" type="text"/>
-                    <button onclick="loadJSON(str.value)">Загрузить</button>
-                </label>
-                <button onclick="uploadJSON()">Выгрузить</button>
-            </div>
+            <label>JSON:
+                <input id="str" type="text"/>
+                <button onclick="loadJSON(str.value)">Загрузить</button>
+            </label>
+            <button onclick="uploadJSON()">Выгрузить</button>
+
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>Минимальный стаж:
+                <input class="parameterInput" id="minValue" type="text">
+            </label>
+            <button onclick="removeBirthDateInfo(minValue.value)">Убрать данные о дате рождения</button>
+
+        </td>
+        <td>
+            <button onclick="addOperator()">Добавить информацию о операторе</button>
+
         </td>
     </tr>
     <tr>
         <td colspan="2">
             <table id="employeesTable">
+
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table class="mainTable" hidden id="findEmployees">
+    <tbody>
+    <tr>
+        <td>
+            <label>Название организации:
+                <input id="orgName" type="text">
+            </label>
+        </td>
+        <td>
+            <label>Должность:
+                <input id="position" type="text">
+            </label>
+        </td>
+        <td>
+            <label>Опыт работы:
+                [<input class="parameterInput" id="minExperience" type="text">,
+                <input class="parameterInput" id="maxExperience" type="text">]
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3">
+            <button onclick="findEmployees()">Получить сотрудников</button>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3">
+            <table id="findEmployeesTable">
 
             </table>
         </td>
