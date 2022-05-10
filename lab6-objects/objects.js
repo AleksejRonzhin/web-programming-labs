@@ -67,9 +67,11 @@ function generateEmployee() {
             firstName: arrayRandElement(firstNames),
             secondName: arrayRandElement(secondNames),
             lastName: arrayRandElement(lastNames)
-        }, birthDate: {
-            day: getRandomValue(0, 28), month: getRandomValue(1, 12), year: getRandomValue(1980, 2001)
-        }, phoneNumber: getRandomPhone(), workPlace: {
+        }, birthDate: new Date(getRandomValue(1980, 2001), getRandomValue(1, 12), getRandomValue(0, 28))
+        //     {
+        //     day: getRandomValue(0, 28), month: getRandomValue(1, 12), year: getRandomValue(1980, 2001)
+        // }
+        , phoneNumber: getRandomPhone(), workPlace: {
             organizationName: arrayRandElement(organizations),
             position: arrayRandElement(positions),
             experience: getRandomValue(1, 10)
@@ -91,7 +93,7 @@ function updateTable(employees) {
 
 function printTable(container, employees) {
     container.innerText = "";
-    if(employees.length === 0){
+    if (employees.length === 0) {
         container.append("Сотрудников не найдено");
         return;
     }
@@ -110,7 +112,7 @@ function getHeadRow(employeesHasOperators) {
     function appendFullName(row) {
         let cell = document.createElement("th");
         cell.colSpan = 3;
-        cell.textContent = "ФИО";
+        cell.textContent = "Полное имя";
         row.append(cell);
     }
 
@@ -199,7 +201,7 @@ function getRow(employee, employeesHasOperators) {
 
     function appendBirthDate(row, birthDate) {
         const getTwoDigitNumber = (number) => {
-            if(number.toString().length === 1){
+            if (number.toString().length === 1) {
                 return `0${number}`;
             } else {
                 return number;
@@ -208,7 +210,7 @@ function getRow(employee, employeesHasOperators) {
 
         let cell = document.createElement("td");
         if (birthDate) {
-            cell.textContent = `${getTwoDigitNumber(birthDate.day)}.${getTwoDigitNumber(birthDate.month)}.${birthDate.year}`
+            cell.textContent = `${getTwoDigitNumber(birthDate.getDate())}.${getTwoDigitNumber(birthDate.getMonth() + 1)}.${birthDate.getFullYear()}`
         }
         row.append(cell);
     }
@@ -446,7 +448,12 @@ function uploadJSON() {
 function loadJSON(str) {
     let oldEmployees = employees;
     try {
-        employees = JSON.parse(str);
+        employees = JSON.parse(str, (key, value) => {
+            if (key === "birthDate") {
+                return new Date(value);
+            }
+            return value;
+        });
         try {
             updateTable(employees);
             n.value = employees.length;
