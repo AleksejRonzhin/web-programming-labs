@@ -68,9 +68,6 @@ function generateEmployee() {
             secondName: arrayRandElement(secondNames),
             lastName: arrayRandElement(lastNames)
         }, birthDate: new Date(getRandomValue(1980, 2001), getRandomValue(1, 12), getRandomValue(0, 28))
-        //     {
-        //     day: getRandomValue(0, 28), month: getRandomValue(1, 12), year: getRandomValue(1980, 2001)
-        // }
         , phoneNumber: getRandomPhone(), workPlace: {
             organizationName: arrayRandElement(organizations),
             position: arrayRandElement(positions),
