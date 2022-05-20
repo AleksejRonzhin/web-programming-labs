@@ -7,8 +7,95 @@
     <link href="stylesheet.css" rel="stylesheet"/>
 </head>
 <body>
-<script>
-    console.log(defineCharacteristics([isMonotonicDecreasing, getMaxValue, getNegativeCount], 1.093, 1.462, 0.001, f3));
-</script>
+<table class="mainTable">
+    <tbody>
+    <tr onchange="changeParameters()">
+        <td>
+            <label>Диапазон: [
+                <input class="parameterInput" id="a" type="text" value="8" oninput="changeParameters()">,
+                <input class="parameterInput" id="b" type="text" value="10" oninput="changeParameters()">]
+            </label><br>
+            <label>Шаг:
+                <input class="parameterInput" id="h" type="text" value="0.1" oninput="changeParameters()">
+            </label><br>
+        </td>
+        <td>
+            <form id="function">
+                <fieldset>
+                    <legend>Вид функции</legend>
+                    <label>
+                        <input checked name="radio" type="radio" value="f1"/>
+                    </label>f1<br>
+                    <label>
+                        <input name="radio" type="radio" value="f2"/>
+                    </label>f2<br>
+                    <label>
+                        <input name="radio" type="radio" value="f3"/>
+                    </label>f3<br>
+                </fieldset>
+            </form>
+        </td>
+        <td>
+            <form id="characteristics">
+                <fieldset>
+                    <legend>Характеристики</legend>
+                    <label>
+                        <input checked id="max" type="checkbox"/>
+                    </label>Максимум<br>
+                    <label>
+                        <input checked id="negativeCount" type="checkbox"/>
+                    </label>Кол-во отрицательных значений<br>
+                    <label>
+                        <input checked id="isMonotonicDecreasing" type="checkbox"/>
+                    </label>Является ли монотонно-убывающей<br>
+                </fieldset>
+            </form>
+        </td>
+        <td>
+            <form id="variant">
+                <fieldset>
+                    <legend>Вариант функции</legend>
+                    <label>
+                        <input checked id="memoize" type="checkbox"/>
+                    </label>Мемоизированная<br>
+                    <label>
+                        <input checked id="debug" type="checkbox"/>
+                    </label>Отладочная<br>
+                    <label>
+                        <input checked id="saveCallsCount" type="checkbox"/>
+                    </label>Сохранение кол-ва вызовов<br>
+                </fieldset>
+            </form>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="4">
+            <button onclick="start()">Рассчитать характеристики</button>
+        </td>
+    </tr>
+    <tr id="resultRow" hidden>
+        <td id="result">
+
+        </td>
+        <td id="memoizeContainer" hidden>
+            <fieldset>
+                <legend>Мемоизация</legend>
+                <label>Значение:
+                    <input class="parameterInput" id="memoizeX" type="text" value="">
+                </label><br>
+                <button class="button" onclick="getFromCache(memoizeX.value)">Получить из кэша</button><br>
+                <button class="button" onclick="getCacheSize()">Размер кэша</button>
+            </fieldset>
+        </td>
+        <td id="saveCallCountContainer" hidden>
+            <fieldset>
+                <legend>Сохранение количество вызовов</legend>
+                <button class="button" onclick="getCallsCount()">Получить кол-во вызовов</button><br>
+                <button class="button" onclick="resetCallsCount()">Обнулить кол-во вызово</button>
+            </fieldset>
+        </td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>
