@@ -10,14 +10,43 @@
 <script>
     main()
 </script>
-<table class="mainTable">
+<table>
     <tbody>
     <tr>
         <td>
-
+            <table class="fraction">
+                <tr>
+                    <td rowspan="3" class="sign">
+                        <label>
+                            <select>
+                                <option>+</option>
+                                <option>-</option>
+                            </select>
+                        </label>
+                    </td>
+                    <td><input class="parameterInput" id="numerator" type="text" value="1"></td>
+                </tr>
+                <tr>
+                    <td><hr color="black"/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input class="parameterInput" id="denominator" type="text" value="2">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button onclick="addOperation()">Добавить операцию</button>
+                    </td>
+                </tr>
+            </table>
         </td>
     </tr>
     </tbody>
 </table>
+<div>
+    <table id="operationsTable">
+    </table>
+</div>
 </body>
 </html>
