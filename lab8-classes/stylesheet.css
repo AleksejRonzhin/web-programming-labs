@@ -1,0 +1,58 @@
+
+.mainTable{
+    margin: auto;
+    border: 0;
+}
+
+.mainTable td{
+    padding: 20px;
+    vertical-align: top;
+    text-align: center;
+}
+
+.parameterInput{
+    margin: 5px;
+    width: 40px;
+}
+
+.cell{
+    vertical-align: center;
+    text-align: center;
+    width: 5px;
+    height: 5px;
+}
+
+.arrayDiv table{
+    margin: auto;
+}
+
+.arrayDiv{
+    margin: 20px;
+}
+
+
+.arrayContainer table td{
+    padding: 5px;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.panel{
+    margin: 20px;
+}
+
+#checkedArrays > td{
+    border: 0;
+}
+
+.textDiv{
+    margin: auto;
+    text-align: center;
+}
+.error{
+    color: red;
+}
+
+.button{
+    margin: 10px;
+}

@@ -17,7 +17,7 @@ function f3(x) {
 
 function memoize(f) {
     let cache = {}
-
+    
     const getKey = (arguments) => {
         return `${arguments.length}:${[].join.call([].map.call(arguments, (item) => item.toFixed(3)), " ")}`;
     }
