@@ -57,6 +57,10 @@
     margin: 10px;
 }
 
+.fraction{
+    margin: auto;
+}
+
 .fraction td{
     padding: 1px;
     vertical-align: center;
@@ -67,19 +71,25 @@
     height: 100px;
 }
 
-.actionRow td{
+.actionCell{
     padding: 10px;
+    text-align: center;
 }
 
 .circleButton{
     border-radius: 50px;
     width: 50px;
     height: 50px;
+    margin: auto;
 }
 
-.operationCell select{
+.operationSelect{
     border-radius: 50px;
     width: 45px;
     height: 45px;
     text-align: center;
+}
+
+#addActionButton{
+    margin: 30px;
 }

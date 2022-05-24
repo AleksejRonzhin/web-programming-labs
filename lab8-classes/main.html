@@ -7,37 +7,47 @@
     <link href="stylesheet.css" rel="stylesheet"/>
 </head>
 <body>
-<table>
+<table >
     <tbody>
     <tr>
         <td>
-            <table class="fraction">
-                <tr>
-                    <td rowspan="3" class="sign">
-                        <label>
-                            <select id="isPositiveSelect">
-                                <option value="positive">+</option>
-                                <option value="negative">-</option>
-                            </select>
-                        </label>
-                    </td>
-                    <td><input class="parameterInput" id="numerator" type="text" value="1"></td>
-                </tr>
-                <tr>
-                    <td><hr color="black"/></td>
-                </tr>
-                <tr>
-                    <td>
-                        <input class="parameterInput" id="denominator" type="text" value="2">
-                    </td>
-                </tr>
-            </table>
+            <div>
+                <table class="fraction">
+                    <tr>
+                        <td><h2>Значения по умолчанию</h2></td>
+                    </tr>
+                    <table>
+                        <tr>
+                            <td class="sign" rowspan="3">
+                                <label>
+                                    <select id="isPositiveSelect">
+                                        <option value="positive">+</option>
+                                        <option value="negative">-</option>
+                                    </select>
+                                </label>
+                            </td>
+                            <td><input class="parameterInput" id="numerator" type="text" onchange="checkNumerator()" value="1"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <hr color="black"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input class="parameterInput" id="denominator" type="text" onchange="checkDenominator()" value="2">
+                            </td>
+                        </tr>
+                    </table>
+                </table>
+            </div>
         </td>
     </tr>
     </tbody>
 </table>
 <div>
-    <button onclick="addAction()">Добавить операцию</button>
+    <button id="addActionButton" onclick="addAction()">Добавить операцию</button>
+    <button id="generate" onclick="generateActions()">Сгенерировать выражения</button>
 </div>
 <div>
     <table id="operationsTable">
