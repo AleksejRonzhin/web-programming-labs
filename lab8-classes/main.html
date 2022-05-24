@@ -7,9 +7,6 @@
     <link href="stylesheet.css" rel="stylesheet"/>
 </head>
 <body>
-<script>
-    main()
-</script>
 <table>
     <tbody>
     <tr>
@@ -18,9 +15,9 @@
                 <tr>
                     <td rowspan="3" class="sign">
                         <label>
-                            <select>
-                                <option>+</option>
-                                <option>-</option>
+                            <select id="isPositiveSelect">
+                                <option value="positive">+</option>
+                                <option value="negative">-</option>
                             </select>
                         </label>
                     </td>
@@ -34,16 +31,14 @@
                         <input class="parameterInput" id="denominator" type="text" value="2">
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        <button onclick="addOperation()">Добавить операцию</button>
-                    </td>
-                </tr>
             </table>
         </td>
     </tr>
     </tbody>
 </table>
+<div>
+    <button onclick="addAction()">Добавить операцию</button>
+</div>
 <div>
     <table id="operationsTable">
     </table>

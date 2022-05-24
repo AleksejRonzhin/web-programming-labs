@@ -1,78 +1,87 @@
-let operations = [];
+let actions = [];
 
-function BaseObject(){
+let operations = [{
+    name: "add", sign: "+"
+}, {
+    name: "sub", sign: "-"
+}, {
+    name: "mul", sign: "*"
+}, {
+    name: "division", sign: "/"
+}, {
+    name: "assignment", sign: ":="
+}]
+
+function BaseObject() {
     this.registrationActions = [];
 
-    this.registrationAction = function(action, ...args){
+    this.registrationAction = function (action, ...args) {
         let time = new Date();
         this.registrationActions.push({
-            action: action,
-            time: time,
-            args: args
+            action: action, time: time, args: args
         })
     }
 
-    this.clearRegistrationActions = function (){
+    this.clearRegistrationActions = function () {
         this.registrationActions = [];
     }
 
-    this.outputRegistrationActions = function(){
+    this.outputRegistrationActions = function () {
         console.log(this.registrationActions);
     }
 }
 
-function Fraction(numerator, denominator, isPositive){
+function Fraction(numerator, denominator, isPositive) {
     this.prototype = new BaseObject();
     this.numerator = numerator;
     this.denominator = denominator;
     this.isPositive = isPositive;
 
-    this.toString = function(){
+    this.toString = function () {
         this.prototype.registrationAction("toString", arguments);
-        return `${this.isPositive? "": " - "} ${this.numerator} / ${this.denominator}`;
+        return `${this.isPositive ? "" : " - "} ${this.numerator} / ${this.denominator}`;
     };
 
-    this.getNumerator = function() {
+    this.getNumerator = function () {
         this.prototype.registrationAction("getNumerator", arguments);
         return this.numerator;
     };
 
-    this.setNumerator = function(value){
+    this.setNumerator = function (value) {
         this.prototype.registrationAction("setNumerator", arguments);
         this.numerator = value;
     };
 
-    this.getDenominator = function(){
+    this.getDenominator = function () {
         this.prototype.registrationAction("getDenominator", arguments);
         return this.denominator;
     };
 
-    this.setDenominator = function(value){
+    this.setDenominator = function (value) {
         this.prototype.registrationAction("setDenominator", arguments);
         this.denominator = value;
     };
 
-    this.add = function(fraction){
+    this.add = function (fraction) {
         this.prototype.registrationAction("add", arguments);
-        let numerator = (this.isPositive? 1: -1) * this.numerator * fraction.denominator
-            + (fraction.isPositive? 1: -1) * fraction.numerator * this.denominator;
+        let numerator = (this.isPositive ? 1 : -1) * this.numerator * fraction.denominator + (fraction.isPositive ? 1 : -1) * fraction.numerator * this.denominator;
         let denominator = this.denominator * fraction.denominator;
 
         let isPositive = true;
-        if (numerator < 0){
+        if (numerator < 0) {
             isPositive = false;
             numerator *= -1;
         }
         return new Fraction(numerator, denominator, isPositive);
     };
 
-    this.sub = function (fraction){
+    this.sub = function (fraction) {
         this.prototype.registrationAction("sub", arguments);
         let addend = new Fraction(fraction.numerator, fraction.denominator, !fraction.isPositive);
         return this.add(addend);
     };
 
-    this.mul = function (fraction){
+    this.mul = function (fraction) {
         this.prototype.registrationAction("mul", arguments);
         let numerator = this.numerator * fraction.numerator;
         let denominator = this.denominator * fraction.denominator;
@@ -80,13 +89,13 @@ function Fraction(numerator, denominator, isPositive){
         return new Fraction(numerator, denominator, isPositive);
     };
 
-    this.division = function (fraction){
+    this.division = function (fraction) {
         this.prototype.registrationAction("division", arguments);
         let inverseFraction = new Fraction(fraction.denominator, fraction.numerator, fraction.isPositive);
         return this.mul(inverseFraction);
     };
 
-    this.assignment = function (fraction){
+    this.assignment = function (fraction) {
         this.prototype.registrationAction("assignment", fraction);
         this.numerator = fraction.numerator;
         this.denominator = fraction.denominator;
@@ -94,114 +103,179 @@ function Fraction(numerator, denominator, isPositive){
     };
 }
 
-function main(){
-    let f3 = new Fraction(1, 2, true);
-    let f4 = new Fraction(1, 2, false);
-    console.log(f3.toString());
-    console.log(f4.toString());
-    f3.getNumerator();
-    f3.setNumerator(12);
-    let f5 = f3.add(f4);
-    let f6 = f3.sub(f4);
-    let f7 = f3.mul(f4);
-    let f8 = f3.division(f4);
-    console.log(f5.toString());
-    console.log(f6.toString());
-    console.log(f7.toString());
-    console.log(f8.toString());
-    f3.assignment(f4);
-    let f9 = f3.division(f4);
-    console.log(f9.toString());
-    console.log(f9);
-}
-
-function getFraction(){
+function getFraction() {
     let numerator = document.getElementById("numerator").value;
     let denominator = document.getElementById("denominator").value;
-
-    return new Fraction(numerator, denominator, true);
+    let isPositive = document.getElementById("isPositiveSelect").value;
+    return new Fraction(numerator, denominator, isPositive === "positive");
 }
 
-function addOperation(){
-    let operation = {
-        firstOperand: null,
-        operation: null,
-        secondOperand: null,
-        result: null
+function addAction() {
+    let action = {
+        firstOperand: null, operation: operations[0].name, secondOperand: null, result: null
     }
-    operations.push(operation);
-    updateOperations();
-
+    actions.push(action);
+    updateActions();
 }
 
-function updateOperations(){
+function changeOperation(actionId, value) {
+    let action = getAction(actionId);
+    action.result = null;
+    action.operation = value;
+    updateActions();
+}
+
+function addFirstOperand(actionId) {
+    let action = getAction(actionId);
+    action.firstOperand = getFraction();
+    updateActions();
+}
+
+function addSecondOperand(actionId) {
+    let action = getAction(actionId);
+    action.secondOperand = getFraction();
+    updateActions();
+}
+
+function performAction(actionId) {
+    let action = getAction(actionId);
+    action.result = action.firstOperand[action.operation](action.secondOperand);
+    updateActions();
+}
+
+function getAction(actionId){
+    return actions[actionId];
+}
+
+function updateActions() {
     let table = document.getElementById("operationsTable");
     table.innerHTML = "";
-    operations.forEach((item, index) => {
-        let row = document.createElement("tr");
-
-        let cell = document.createElement("td");
-        row.append(cell);
-        if(item.firstOperand){
-            cell.textContent = item.firstOperand;
-        } else {
-            cell.innerHTML = `<button onclick='addFirstOperand(${index})'>Создать объект</button>`;
-        }
-        cell = document.createElement("td");
-        row.append(cell);
-        cell.innerHTML = `<select id='operation${index}'><option value="add">+</option><option selected="selected" value="sub">-</option></select>`
-
-        cell = document.createElement("td");
-        row.append(cell);
-        if(item.secondOperand){
-            cell.textContent = item.secondOperand;
-        } else {
-            cell.innerHTML = `<button onclick='addSecondOperand(${index})'>Создать объект</button>`;
-        }
-
-        if(item.firstOperand && item.secondOperand){
-            cell = document.createElement("td");
-            row.append(cell);
-            cell.innerHTML = `<button onclick='performOperation(${index})'>=</button>`
-        }
-
-        if(item.result){
-            cell = document.createElement("td");
-            row.append(cell);
-            cell.textContent = item.result;
-        }
-
-
+    actions.forEach((item, index) => {
+        let row = getActionRow(item, index);
         table.append(row);
     })
-    //
-    // let fraction = getFraction();
-    // console.log(fraction);
 }
 
-function addFirstOperand(operationId){
-    let operation = operations[operationId];
-    operation.firstOperand = getFraction();
-    updateOperations();
-}
+function getActionRow(action, index){
+    let row = document.createElement("tr");
+    row.className = "actionRow";
 
-function addSecondOperand(operationId){
-    let operation = operations[operationId];
-    operation.secondOperand = getFraction();
-    updateOperations();
-}
+    let cell = getFirstOperandCell(action, index);
+    row.append(cell);
 
-function performOperation(operationId){
-    let operation = operations[operationId];
+    cell = getOperationCell(action, index);
+    row.append(cell);
 
-    let action = document.getElementById(`operation${operationId}`).value;
-    console.log(action);
-    if (action === "add"){
-        operation.result = operation.firstOperand.add(operation.secondOperand);
-    }
-    if(action === "sub"){
-        operation.result = operation.firstOperand.sub(operation.secondOperand);
+    cell = getSecondOperandCell(action, index);
+    row.append(cell);
+
+    if (action.firstOperand && action.secondOperand) {
+        cell = getPerformActionButton(index);
+        row.append(cell);
     }
 
-    updateOperations();
+    if (action.result) {
+        cell = getResultCell(action);
+        row.append(cell);
+    }
+
+    return row;
+}
+
+function getFirstOperandCell(action, index){
+    let cell = document.createElement("td");
+    if (action.firstOperand) {
+        cell.textContent = action.firstOperand;
+        cell.innerHTML = getFractionView(action.firstOperand, index, "first");
+    } else {
+        cell.innerHTML = `<button class="circleButton" onclick='addFirstOperand(${index})'>+</button>`;
+    }
+    return cell;
+}
+
+function getOperationCell(action, index){
+    function getOperationSelect(startValue, index) {
+        return `<select onchange="changeOperation(${index}, value)">${operations.map((operation => {
+            return `<option ${startValue === operation.name ? 'selected' : ''} value=${operation.name}>${operation.sign}</option>`
+        })).join("")}</select>`
+    }
+
+    let cell = document.createElement("td");
+    cell.innerHTML = getOperationSelect(action.operation, index);
+    cell.className = "operationCell";
+    return cell;
+}
+
+function getSecondOperandCell(action, index){
+    let cell = document.createElement("td");
+    if (action.secondOperand) {
+        cell.textContent = action.secondOperand;
+        cell.innerHTML = getFractionView(action.secondOperand, index, "second");
+    } else {
+        cell.innerHTML = `<button class="circleButton"  onclick='addSecondOperand(${index})'>+</button>`;
+    }
+    return cell;
+}
+
+function getPerformActionButton(index){
+    let cell = document.createElement("td");
+    cell.innerHTML = `<button onclick='performAction(${index})'>=</button>`
+    return cell;
+}
+
+function getResultCell(action){
+    let cell;
+    cell = document.createElement("td");
+    cell.textContent = action.result;
+    return cell;
+}
+
+function getFractionView(fraction, index, operandOrder){
+    return `<table class="fraction">
+                <tr>
+                    <td rowspan="3" class="sign">
+                        <label>
+                            <select>
+                                <option value="positive">+</option>
+                                <option value="negative">-</option>
+                            </select>
+                        </label>
+                    </td>
+                    <td><input class="parameterInput" type="text" value="${fraction.numerator}" oninput="changeNumerator('${operandOrder}:${index}', value)"></td>
+                </tr>
+                <tr>
+                    <td><hr color="black"/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input class="parameterInput" id="denominator" type="text" value="${fraction.denominator}" oninput="changeDenominator('${operandOrder}:${index}', value)">
+                    </td>
+                </tr>
+            </table>`;
+}
+
+function changeNumerator(str, value){
+    let operandOrder = str.split(":")[0];
+    let actionId = str.split(":")[1];
+    let action = getAction(actionId);
+    if(operandOrder === "first"){
+        action.firstOperand.setNumerator(value)
+    }
+    if(operandOrder === "second"){
+        action.secondOperand.setNumerator(value)
+    }
+    updateActions();
+}
+
+function changeDenominator(str, value){
+    let operandOrder = str.split(":")[0];
+    let actionId = str.split(":")[1];
+    let action = getAction(actionId);
+    if(operandOrder === "first"){
+        action.firstOperand.setDenominator(value)
+    }
+    if(operandOrder === "second"){
+        action.secondOperand.setDenominator(value)
+    }
+    updateActions();
 }
