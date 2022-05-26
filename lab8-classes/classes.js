@@ -1,4 +1,4 @@
-let actions = [];
+let expressions = [];
 
 let operations = [{
     name: "add", sign: "+"
@@ -15,54 +15,33 @@ let operations = [{
 let defaultNumerator = 1;
 let defaultDenominator = 2;
 
-function BaseObject() {
-    this.registrationActions = [];
-
-    this.registrationAction = function (action, ...args) {
-        let time = new Date();
-        this.registrationActions.push({
-            action: action, time: time, args: args
-        })
-    }
-
-    this.clearRegistrationActions = function () {
-        this.registrationActions = [];
-        console.log("Список действий очищен!")
-    }
-
-    this.outputRegistrationActions = function () {
-        console.log(this.registrationActions);
-    }
-}
-
 function Fraction(numerator, denominator, isPositive) {
-    this.prototype = new BaseObject();
     this.numerator = numerator;
     this.denominator = denominator;
     this.isPositive = isPositive;
 
     this.toString = function () {
-        this.prototype.registrationAction("toString", arguments);
+        this.registrationAction("toString", arguments);
         return `${this.isPositive ? "" : " - "} ${this.numerator} / ${this.denominator}`;
     };
 
     this.getNumerator = function () {
-        this.prototype.registrationAction("getNumerator", arguments);
+        this.registrationAction("getNumerator", arguments);
         return this.numerator;
     };
 
     this.setNumerator = function (value) {
-        this.prototype.registrationAction("setNumerator", arguments);
+        this.registrationAction("setNumerator", arguments);
         this.numerator = value;
     };
 
     this.getDenominator = function () {
-        this.prototype.registrationAction("getDenominator", arguments);
+        this.registrationAction("getDenominator", arguments);
         return this.denominator;
     };
 
     this.setDenominator = function (value) {
-        this.prototype.registrationAction("setDenominator", arguments);
+        this.registrationAction("setDenominator", arguments);
         this.denominator = value;
     };
 
@@ -75,7 +54,7 @@ function Fraction(numerator, denominator, isPositive) {
     }
 
     this.add = function (fraction) {
-        this.prototype.registrationAction("add", fraction);
+        this.registrationAction("add", fraction);
         let numerator = (this.isPositive ? 1 : -1) * this.numerator * fraction.denominator + (fraction.isPositive ? 1 : -1) * fraction.numerator * this.denominator;
         let denominator = this.denominator * fraction.denominator;
 
@@ -90,7 +69,7 @@ function Fraction(numerator, denominator, isPositive) {
     };
 
     this.sub = function (fraction) {
-        this.prototype.registrationAction("sub", fraction);
+        this.registrationAction("sub", fraction);
         let numerator = (this.isPositive ? 1 : -1) * this.numerator * fraction.denominator - (fraction.isPositive ? 1 : -1) * fraction.numerator * this.denominator;
         let denominator = this.denominator * fraction.denominator;
 
@@ -106,7 +85,7 @@ function Fraction(numerator, denominator, isPositive) {
     };
 
     this.mul = function (fraction) {
-        this.prototype.registrationAction("mul", fraction);
+        this.registrationAction("mul", fraction);
         let numerator = this.numerator * fraction.numerator;
         let denominator = this.denominator * fraction.denominator;
         let isPositive = this.isPositive * fraction.isPositive || !this.isPositive * !fraction.isPositive;
@@ -116,7 +95,7 @@ function Fraction(numerator, denominator, isPositive) {
     };
 
     this.division = function (fraction) {
-        this.prototype.registrationAction("division", fraction);
+        this.registrationAction("division", fraction);
         let numerator = this.numerator * fraction.denominator;
         let denominator = this.denominator * fraction.numerator;
         let isPositive = this.isPositive * fraction.isPositive || !this.isPositive * !fraction.isPositive;
@@ -126,7 +105,7 @@ function Fraction(numerator, denominator, isPositive) {
     };
 
     this.assignment = function (fraction) {
-        this.prototype.registrationAction("assignment", fraction);
+        this.registrationAction("assignment", fraction);
         this.numerator = fraction.numerator;
         this.denominator = fraction.denominator;
         this.isPositive = fraction.isPositive;
@@ -150,6 +129,24 @@ function Fraction(numerator, denominator, isPositive) {
     }
 }
 
+Fraction.prototype.registrationActions = [];
+
+Fraction.prototype.registrationAction = function (action, ...args) {
+    let time = new Date();
+    this.registrationActions.push({
+        action: action, time: time, args: args
+    })
+};
+
+Fraction.prototype.clearRegistrationActions = function () {
+    this.registrationActions = [];
+    console.log("Список действий очищен!")
+}
+
+Fraction.prototype.outputRegistrationActions = function () {
+    console.log(this.registrationActions);
+}
+
 function getDefaultFraction() {
     let numerator = document.getElementById("numerator").value;
     let denominator = document.getElementById("denominator").value;
@@ -157,152 +154,138 @@ function getDefaultFraction() {
     return new Fraction(numerator, denominator, isPositive === "positive");
 }
 
-function addAction() {
-    let action = {
+//Зарегистрированные действия
+function showRegistrationInfo() {
+    Fraction.prototype.outputRegistrationActions();
+}
+
+function clearRegistrationInfo() {
+    Fraction.prototype.clearRegistrationActions();
+}
+
+
+// Логика выражений
+function addExpression() {
+    let expression = {
         firstOperand: null, operation: operations[0].name, secondOperand: null, result: null
     }
-    actions.push(action);
-    updateActions();
+    expressions.push(expression);
+    updateExpressionsView();
 }
 
-function changeOperation(actionId, value) {
-    let action = getAction(actionId);
-    action.result = null;
-    action.operation = value;
-    updateActions();
+function changeExpressionOperation(expressionId, value) {
+    let expression = getExpression(expressionId);
+    expression.result = null;
+    expression.operation = value;
+    updateExpressionsView();
 }
 
-function addFirstOperand(actionId) {
-    let action = getAction(actionId);
-    action.firstOperand = getDefaultFraction();
-    updateActions();
+function addFirstExpressionOperand(expressionId) {
+    let expression = getExpression(expressionId);
+    expression.firstOperand = getDefaultFraction();
+    updateExpressionsView();
 }
 
-function addSecondOperand(actionId) {
-    let action = getAction(actionId);
+function addSecondExpressionOperand(expressionId) {
+    let action = getExpression(expressionId);
     action.secondOperand = getDefaultFraction();
-    updateActions();
+    updateExpressionsView();
 }
 
-function performAction(actionId) {
-    let action = getAction(actionId);
-    action.result = action.firstOperand[action.operation](action.secondOperand);
-    updateActions();
+function performExpression(expressionId) {
+    let expression = getExpression(expressionId);
+    expression.result = expression.firstOperand[expression.operation](expression.secondOperand);
+    updateExpressionsView();
 }
 
-function getAction(actionId) {
-    return actions[actionId];
+function getExpression(expressionId) {
+    return expressions[expressionId];
 }
 
-function updateActions() {
-    let table = document.getElementById("operationsTable");
+// Отображение выражений
+function updateExpressionsView() {
+    let table = document.getElementById("expressionsTable");
     table.innerHTML = "";
-    actions.forEach((item, index) => {
-        let row = getActionRow(item, index);
+    expressions.forEach((expression, index) => {
+        let row = getExpressionView(expression, index);
         table.append(row);
     })
 }
 
-function getActionRow(action, index) {
+function getExpressionView(expression, index) {
     let row = document.createElement("tr");
 
-    let cell = getRegistrationActionButtonsCell(index);
+    let cell = getFirstOperandCell(expression, index);
+    cell.className = "expressionCell";
     row.append(cell);
 
-    cell = getFirstOperandCell(action, index);
-    cell.className = "actionCell";
+    cell = getOperationCell(expression, index);
+    cell.className = "expressionCell";
     row.append(cell);
 
-    cell = getOperationCell(action, index);
-    cell.className = "actionCell";
+    cell = getSecondOperandCell(expression, index);
+    cell.className = "expressionCell";
     row.append(cell);
 
-    cell = getSecondOperandCell(action, index);
-    cell.className = "actionCell";
-    row.append(cell);
-
-    if (action.firstOperand && action.secondOperand) {
-        cell = getPerformActionButton(index);
-        cell.className = "actionCell";
+    if (expression.firstOperand && expression.secondOperand) {
+        cell = getPerformExpressionButton(index);
+        cell.className = "expressionCell";
         row.append(cell);
     }
 
-    if (action.result) {
-        cell = getResultCell(action);
-        cell.className = "actionCell";
+    if (expression.result) {
+        cell = getResultCell(expression);
+        cell.className = "expressionCell";
         row.append(cell);
     }
     return row;
 }
 
-function getFirstOperandCell(action, index) {
+function getFirstOperandCell(expression, index) {
     let cell = document.createElement("td");
-    if (action.firstOperand) {
-        cell.innerHTML = getFractionView(action.firstOperand, index, "first");
+    if (expression.firstOperand) {
+        cell.innerHTML = getFractionView(expression.firstOperand, index, "first");
     } else {
-        cell.innerHTML = `<button class="circleButton" onclick='addFirstOperand(${index})'>+</button>`;
+        cell.innerHTML = `<button class="circleButton" onclick='addFirstExpressionOperand(${index})'>+</button>`;
     }
     return cell;
 }
 
-function getOperationCell(action, index) {
+function getOperationCell(expression, index) {
     function getOperationSelect(startValue, index) {
-        return `<select class="operationSelect" onchange="changeOperation(${index}, value)">${operations.map((operation => {
+        return `<select class="operationSelect" onchange="changeExpressionOperation(${index}, value)">${operations.map((operation => {
             return `<option ${startValue === operation.name ? 'selected' : ''} value=${operation.name}>${operation.sign}</option>`
         })).join("")}</select>`
     }
 
     let cell = document.createElement("td");
-    cell.innerHTML = getOperationSelect(action.operation, index);
+    cell.innerHTML = getOperationSelect(expression.operation, index);
     return cell;
 }
 
-function getSecondOperandCell(action, index) {
+function getSecondOperandCell(expression, index) {
     let cell = document.createElement("td");
-    if (action.secondOperand) {
-        cell.innerHTML = getFractionView(action.secondOperand, index, "second");
+    if (expression.secondOperand) {
+        cell.innerHTML = getFractionView(expression.secondOperand, index, "second");
     } else {
-        cell.innerHTML = `<button class="circleButton"  onclick='addSecondOperand(${index})'>+</button>`;
+        cell.innerHTML = `<button class="circleButton"  onclick='addSecondExpressionOperand(${index})'>+</button>`;
     }
     return cell;
 }
 
-function getPerformActionButton(index) {
+function getPerformExpressionButton(index) {
     let cell = document.createElement("td");
-    cell.innerHTML = `<button onclick='performAction(${index})'>=</button>`
+    cell.innerHTML = `<button onclick='performExpression(${index})'>=</button>`
     return cell;
 }
 
 function getResultCell(action) {
-    let cell;
-    cell = document.createElement("td");
+    let cell = document.createElement("td");
     cell.textContent = action.result;
     return cell;
 }
 
-function getRegistrationActionButtonsCell(index) {
-    let cell = document.createElement("td");
-    cell.innerHTML = `<div class="registrationActionButtons">
-<button onclick="showRegistrationInfo(${index})">Список действий</button>
-<button onclick="clearRegistrationInfo(${index})">Очистить список</button>
-</div>`;
-    return cell;
-}
-
-function showRegistrationInfo(index) {
-    let action = getAction(index);
-    if (action.firstOperand) {
-        action.firstOperand.prototype.outputRegistrationActions();
-    }
-}
-
-function clearRegistrationInfo(index) {
-    let action = getAction(index);
-    if (action.firstOperand) {
-        action.firstOperand.prototype.clearRegistrationActions();
-    }
-}
-
+// Отображение дроби
 function getFractionView(fraction, index, operandOrder) {
     return `<table class="fraction">
                 <tr>
@@ -329,59 +312,60 @@ function getFractionView(fraction, index, operandOrder) {
 
 function changeSign(str, value) {
     let operandOrder = str.split(":")[0];
-    let actionId = str.split(":")[1];
-    let action = getAction(actionId);
+    let expressionId = str.split(":")[1];
+    let expression = getExpression(expressionId);
     if (operandOrder === "first") {
-        action.firstOperand.setSign(value);
+        expression.firstOperand.setSign(value);
     }
     if (operandOrder === "second") {
-        action.secondOperand.setSign(value);
+        expression.secondOperand.setSign(value);
     }
-    action.result = null;
-    updateActions();
+    expression.result = null;
+    updateExpressionsView();
 }
 
 function changeNumerator(str, value) {
     if(!isCorrectValue(value, "Числитель")){
-        updateActions();
+        updateExpressionsView();
         return;
     }
 
     let operandOrder = str.split(":")[0];
-    let actionId = str.split(":")[1];
-    let action = getAction(actionId);
+    let expressionId = str.split(":")[1];
+    let expression = getExpression(expressionId);
 
     if (operandOrder === "first") {
-        action.firstOperand.setNumerator(value)
+        expression.firstOperand.setNumerator(value)
     }
     if (operandOrder === "second") {
-        action.secondOperand.setNumerator(value)
+        expression.secondOperand.setNumerator(value)
     }
-    action.result = null;
-    updateActions();
+    expression.result = null;
+    updateExpressionsView();
 }
 
 function changeDenominator(str, value) {
     if(!isCorrectValue(value, "Знаменатель")){
-        updateActions();
+        updateExpressionsView();
         return;
     }
 
     let operandOrder = str.split(":")[0];
-    let actionId = str.split(":")[1];
-    let action = getAction(actionId);
+    let expressionId = str.split(":")[1];
+    let expression = getExpression(expressionId);
 
     if (operandOrder === "first") {
-        action.firstOperand.setDenominator(value)
+        expression.firstOperand.setDenominator(value)
     }
     if (operandOrder === "second") {
-        action.secondOperand.setDenominator(value)
+        expression.secondOperand.setDenominator(value)
     }
-    action.result = null;
-    updateActions();
+    expression.result = null;
+    updateExpressionsView();
 }
 
-function generateActions() {
+// Генерация выражений
+function generateExpressions() {
     function getRandomValue(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -391,20 +375,21 @@ function generateActions() {
     }
 
     for (let i = 0; i < 10; i++) {
-        let action = {
+        let expression = {
             firstOperand: getRandomFraction(),
             operation: operations[getRandomValue(0, operations.length - 1)].name,
             secondOperand: getRandomFraction(),
             result: null
         }
 
-        action.result = action.firstOperand[action.operation](action.secondOperand);
+        expression.result = expression.firstOperand[expression.operation](expression.secondOperand);
 
-        actions.push(action);
+        expressions.push(expression);
     }
-    updateActions();
+    updateExpressionsView();
 }
 
+// Проверка вводимых значений
 function checkNumerator(){
     let numerator = document.getElementById("numerator").value;
     if(!isCorrectValue(numerator, "Числитель")){

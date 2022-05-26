@@ -67,11 +67,11 @@
     text-align: center;
 }
 
-.actionRow{
+.expressionRow{
     height: 100px;
 }
 
-.actionCell{
+.expressionCell{
     padding: 10px;
     text-align: center;
 }
@@ -90,6 +90,6 @@
     text-align: center;
 }
 
-#addActionButton{
-    margin: 30px;
+.actionButton{
+    margin: 10px;
 }

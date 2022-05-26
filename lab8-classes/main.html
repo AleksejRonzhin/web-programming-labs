@@ -11,6 +11,13 @@
     <tbody>
     <tr>
         <td>
+            <h2>Регистрация действий</h2>
+            <div class="registrationActionButtons">
+                <button class="actionButton" onclick="showRegistrationInfo()">Список действий</button><br>
+                <button class="actionButton" onclick="clearRegistrationInfo()">Очистить список</button>
+            </div>
+        </td>
+        <td>
             <div>
                 <table class="fraction">
                     <tr>
@@ -46,11 +53,11 @@
     </tbody>
 </table>
 <div>
-    <button id="addActionButton" onclick="addAction()">Добавить операцию</button>
-    <button id="generate" onclick="generateActions()">Сгенерировать выражения</button>
+    <button class="actionButton" onclick="addExpression()">Добавить операцию</button>
+    <button class="actionButton" onclick="generateExpressions()">Сгенерировать выражения</button>
 </div>
 <div>
-    <table id="operationsTable">
+    <table id="expressionsTable">
     </table>
 </div>
 </body>

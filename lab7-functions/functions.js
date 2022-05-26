@@ -254,9 +254,9 @@ function getFunction(name) {
 }
 
 function getMaxValue(f) {
-    let maxValue = f[0];
+    let maxValue = { x: null, y: Number.NEGATIVE_INFINITY};
     f.forEach((value) => {
-        if (maxValue.y < value.y) {
+        if (maxValue.y < value.y && value.y !== Number.POSITIVE_INFINITY && value.y !== Number.NEGATIVE_INFINITY) {
             maxValue = value;
         }
     })
