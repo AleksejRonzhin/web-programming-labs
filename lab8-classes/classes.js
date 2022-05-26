@@ -122,7 +122,7 @@ function Fraction(numerator, denominator, isPositive) {
         }
 
         let divider = gcd(this.numerator, this.denominator);
-        if(divider){
+        if (divider) {
             this.numerator /= divider;
             this.denominator /= divider;
         }
@@ -244,7 +244,7 @@ function getExpressionView(expression, index) {
 function getFirstOperandCell(expression, index) {
     let cell = document.createElement("td");
     if (expression.firstOperand) {
-        cell.innerHTML = getFractionView(expression.firstOperand, index, "first");
+        cell.innerHTML = getFractionView(expression.firstOperand, index, "first", false);
     } else {
         cell.innerHTML = `<button class="circleButton" onclick='addFirstExpressionOperand(${index})'>+</button>`;
     }
@@ -266,7 +266,7 @@ function getOperationCell(expression, index) {
 function getSecondOperandCell(expression, index) {
     let cell = document.createElement("td");
     if (expression.secondOperand) {
-        cell.innerHTML = getFractionView(expression.secondOperand, index, "second");
+        cell.innerHTML = getFractionView(expression.secondOperand, index, "second", false);
     } else {
         cell.innerHTML = `<button class="circleButton"  onclick='addSecondExpressionOperand(${index})'>+</button>`;
     }
@@ -279,32 +279,32 @@ function getPerformExpressionButton(index) {
     return cell;
 }
 
-function getResultCell(action) {
+function getResultCell(expression, index) {
     let cell = document.createElement("td");
-    cell.textContent = action.result;
+    cell.innerHTML = getFractionView(expression.result, index, "result", true);
     return cell;
 }
 
 // Отображение дроби
-function getFractionView(fraction, index, operandOrder) {
+function getFractionView(fraction, index, operandOrder, isReadOnly) {
     return `<table class="fraction">
                 <tr>
                     <td rowspan="3" class="sign">
                         <label>
                             <select onchange="changeSign('${operandOrder}:${index}', value)">
-                                <option value="positive" ${fraction.getSign() === "positive" ? "selected" : ""}>+</option>
-                                <option value="negative" ${fraction.getSign() === "negative" ? "selected" : ""}>-</option>
+                                <option value="positive" ${isReadOnly? "disabled": ""} ${fraction.getSign() === "positive" ? "selected" : ""}>+</option>
+                                <option value="negative" ${isReadOnly? "disabled": ""} ${fraction.getSign() === "negative" ? "selected" : ""}>-</option>
                             </select>
                         </label>
                     </td>
-                    <td><input class="parameterInput" type="text" value="${fraction.numerator}" onchange="changeNumerator('${operandOrder}:${index}', value)"></td>
+                    <td><input ${isReadOnly? "readonly": ""} class="parameterInput" type="text" value="${fraction.numerator}" onchange="changeNumerator('${operandOrder}:${index}', value)"></td>
                 </tr>
                 <tr>
                     <td><hr color="black"/></td>
                 </tr>
                 <tr>
                     <td>
-                        <input class="parameterInput" id="denominator" type="text" value="${fraction.denominator}" onchange="changeDenominator('${operandOrder}:${index}', value)">
+                        <input ${isReadOnly? "readonly": ""} class="parameterInput" id="denominator" type="text" value="${fraction.denominator}" onchange="changeDenominator('${operandOrder}:${index}', value)">
                     </td>
                 </tr>
             </table>`;
@@ -325,7 +325,7 @@ function changeSign(str, value) {
 }
 
 function changeNumerator(str, value) {
-    if(!isCorrectValue(value, "Числитель")){
+    if (!isCorrectValue(value, "Числитель")) {
         updateExpressionsView();
         return;
     }
@@ -345,7 +345,7 @@ function changeNumerator(str, value) {
 }
 
 function changeDenominator(str, value) {
-    if(!isCorrectValue(value, "Знаменатель")){
+    if (!isCorrectValue(value, "Знаменатель")) {
         updateExpressionsView();
         return;
     }
@@ -390,34 +390,34 @@ function generateExpressions() {
 }
 
 // Проверка вводимых значений
-function checkNumerator(){
+function checkNumerator() {
     let numerator = document.getElementById("numerator").value;
-    if(!isCorrectValue(numerator, "Числитель")){
+    if (!isCorrectValue(numerator, "Числитель")) {
         document.getElementById("numerator").value = defaultNumerator;
     }
 }
 
-function checkDenominator(){
+function checkDenominator() {
     let numerator = document.getElementById("denominator").value;
-    if(!isCorrectValue(numerator, "Знаменатель")){
+    if (!isCorrectValue(numerator, "Знаменатель")) {
         document.getElementById("denominator").value = defaultDenominator;
     }
 }
 
-function isCorrectValue(value, name){
-    if(!isNumeric(value)){
+function isCorrectValue(value, name) {
+    if (!isNumeric(value)) {
         alert(`${name} не число!`);
         return false;
     }
-    if(!isInteger(value)){
+    if (!isInteger(value)) {
         alert(`${name} не целое число!`);
         return false;
     }
-    if(value < 0){
+    if (value < 0) {
         alert(`${name} не положительное число!`);
         return false;
     }
-    if(value > 100){
+    if (value > 100) {
         alert(`${name} слишком большое число!`);
         return false;
     }

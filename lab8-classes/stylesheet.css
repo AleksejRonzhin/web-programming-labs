@@ -39,6 +39,8 @@
 
 .panel{
     margin: 20px;
+    vertical-align: top;
+    height: 150px;
 }
 
 #checkedArrays > td{

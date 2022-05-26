@@ -1,64 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Classes</title>
     <script src="classes.js"></script>
-    <link href="stylesheet.css" rel="stylesheet"/>
+    <link href="stylesheet.css" rel="stylesheet" />
 </head>
+
 <body>
-<table >
-    <tbody>
-    <tr>
-        <td>
-            <h2>Регистрация действий</h2>
-            <div class="registrationActionButtons">
-                <button class="actionButton" onclick="showRegistrationInfo()">Список действий</button><br>
-                <button class="actionButton" onclick="clearRegistrationInfo()">Очистить список</button>
-            </div>
-        </td>
-        <td>
-            <div>
-                <table class="fraction">
-                    <tr>
-                        <td><h2>Значения по умолчанию</h2></td>
-                    </tr>
-                    <table>
-                        <tr>
-                            <td class="sign" rowspan="3">
-                                <label>
-                                    <select id="isPositiveSelect">
-                                        <option value="positive">+</option>
-                                        <option value="negative">-</option>
-                                    </select>
-                                </label>
-                            </td>
-                            <td><input class="parameterInput" id="numerator" type="text" onchange="checkNumerator()" value="1"></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <hr color="black"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input class="parameterInput" id="denominator" type="text" onchange="checkDenominator()" value="2">
-                            </td>
-                        </tr>
-                    </table>
-                </table>
-            </div>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<div>
-    <button class="actionButton" onclick="addExpression()">Добавить операцию</button>
-    <button class="actionButton" onclick="generateExpressions()">Сгенерировать выражения</button>
-</div>
-<div>
-    <table id="expressionsTable">
+    <table>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="panel">
+                        <h2>Значение по умолчанию</h2>
+                        <div>
+                            <table class="fraction">
+                                <tr>
+                                    <td class="sign" rowspan="3">
+                                        <label>
+                                            <select aria-readonly="true" id="isPositiveSelect">
+                                                <option value="positive">+</option>
+                                                <option value="negative">-</option>
+                                            </select>
+                                        </label>
+                                    </td>
+                                    <td><input class="parameterInput" id="numerator" type="text"
+                                            onchange="checkNumerator()" value="1"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <hr color="black" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input class="parameterInput" id="denominator" type="text"
+                                            onchange="checkDenominator()" value="2">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="panel">
+                        <h2>Регистрация действий</h2>
+                        <div class="registrationActionButtons">
+                            <button class="actionButton" onclick="showRegistrationInfo()">Список действий</button><br>
+                            <button class="actionButton" onclick="clearRegistrationInfo()">Очистить список</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
     </table>
-</div>
+    <div>
+        <button class="actionButton" onclick="addExpression()">Добавить операцию</button>
+        <button class="actionButton" onclick="generateExpressions()">Сгенерировать выражения</button>
+    </div>
+    <div>
+        <table id="expressionsTable">
+        </table>
+    </div>
 </body>
+
 </html>
