@@ -1,4 +1,17 @@
 let expressions = [];
+function getExpression(expressionId) {
+    return expressions.find((item) => {
+        return item.id == expressionId;
+    });
+}
+
+let fractions = [];
+function getFraction(fractionId) {
+    let fraction = fractions.find((item) => {
+        return item && item.id == fractionId;
+    });
+    return fraction;
+}
 
 let operations = [{
     name: "add", sign: "+"
@@ -15,10 +28,24 @@ let operations = [{
 let defaultNumerator = 1;
 let defaultDenominator = 2;
 
+function Expression(firstOperand, operation, secondOperand) {
+    this.id = Expression.count++;
+    this.firstOperand = firstOperand;
+    this.operation = operation;
+    this.secondOperand = secondOperand;
+    this.result = null;
+
+    this.perform = function () {
+        this.result = this.firstOperand[this.operation](this.secondOperand);
+    }
+}
+Expression.count = 0;
+
 function Fraction(numerator, denominator, isPositive) {
     this.numerator = numerator;
     this.denominator = denominator;
     this.isPositive = isPositive;
+    this.id = Fraction.count++;
 
     this.toString = function () {
         this.registrationAction("toString", arguments);
@@ -129,6 +156,8 @@ function Fraction(numerator, denominator, isPositive) {
     }
 }
 
+Fraction.count = 0;
+
 Fraction.prototype.registrationActions = [];
 
 Fraction.prototype.registrationAction = function (action, ...args) {
@@ -147,11 +176,54 @@ Fraction.prototype.outputRegistrationActions = function () {
     console.log(this.registrationActions);
 }
 
+function CreateExpression(mode) {
+    let expression = null;
+    if (mode === "empty") {
+        expression = new Expression(null, operations[0].name, null);
+    }
+    if (mode === "random") {
+        expression = getRandomExpression();
+
+    }
+    expressions.push(expression);
+    return expression;
+}
+
+function getRandomExpression() {
+    return new Expression(CreateFraction("random"), getRandomOperation(), CreateFraction("random"));
+}
+
+function getRandomValue(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomOperation() {
+    return operations[getRandomValue(0, operations.length - 1)].name;
+}
+
+function CreateFraction(mode) {
+    let fraction = null;
+    if (mode === "default") {
+        fraction = getDefaultFraction();
+    }
+    if (mode === "random") {
+        fraction = getRandomFraction();
+    }
+    fractions.push(fraction);
+    return fraction;
+}
+
+function getRandomFraction() {
+    return new Fraction(getRandomValue(1, 10), getRandomValue(1, 10), getRandomValue(1, 2) === 1);
+}
+
+
 function getDefaultFraction() {
     let numerator = document.getElementById("numerator").value;
     let denominator = document.getElementById("denominator").value;
     let isPositive = document.getElementById("isPositiveSelect").value;
-    return new Fraction(numerator, denominator, isPositive === "positive");
+    let fraction = new Fraction(numerator, denominator, isPositive === "positive");
+    return fraction;
 }
 
 //Зарегистрированные действия
@@ -166,10 +238,7 @@ function clearRegistrationInfo() {
 
 // Логика выражений
 function addExpression() {
-    let expression = {
-        firstOperand: null, operation: operations[0].name, secondOperand: null, result: null
-    }
-    expressions.push(expression);
+    CreateExpression("empty");
     updateExpressionsView();
 }
 
@@ -182,53 +251,49 @@ function changeExpressionOperation(expressionId, value) {
 
 function addFirstExpressionOperand(expressionId) {
     let expression = getExpression(expressionId);
-    expression.firstOperand = getDefaultFraction();
+    expression.firstOperand = CreateFraction("default");
     updateExpressionsView();
 }
 
 function addSecondExpressionOperand(expressionId) {
-    let action = getExpression(expressionId);
-    action.secondOperand = getDefaultFraction();
+    let expression = getExpression(expressionId);
+    expression.secondOperand = CreateFraction("default");
     updateExpressionsView();
 }
 
 function performExpression(expressionId) {
     let expression = getExpression(expressionId);
-    expression.result = expression.firstOperand[expression.operation](expression.secondOperand);
+    expression.perform();
     updateExpressionsView();
-}
-
-function getExpression(expressionId) {
-    return expressions[expressionId];
 }
 
 // Отображение выражений
 function updateExpressionsView() {
     let table = document.getElementById("expressionsTable");
     table.innerHTML = "";
-    expressions.forEach((expression, index) => {
-        let row = getExpressionView(expression, index);
+    expressions.forEach((expression) => {
+        let row = getExpressionView(expression);
         table.append(row);
     })
 }
 
-function getExpressionView(expression, index) {
+function getExpressionView(expression) {
     let row = document.createElement("tr");
 
-    let cell = getFirstOperandCell(expression, index);
+    let cell = getFirstOperandCell(expression);
     cell.className = "expressionCell";
     row.append(cell);
 
-    cell = getOperationCell(expression, index);
+    cell = getOperationCell(expression);
     cell.className = "expressionCell";
     row.append(cell);
 
-    cell = getSecondOperandCell(expression, index);
+    cell = getSecondOperandCell(expression);
     cell.className = "expressionCell";
     row.append(cell);
 
     if (expression.firstOperand && expression.secondOperand) {
-        cell = getPerformExpressionButton(index);
+        cell = getPerformExpressionButton(expression);
         cell.className = "expressionCell";
         row.append(cell);
     }
@@ -241,150 +306,121 @@ function getExpressionView(expression, index) {
     return row;
 }
 
-function getFirstOperandCell(expression, index) {
+function getFirstOperandCell(expression) {
     let cell = document.createElement("td");
+    let expressionId = expression.id;
     if (expression.firstOperand) {
-        cell.innerHTML = getFractionView(expression.firstOperand, index, "first", false);
+        cell.innerHTML = getFractionView(expression, expression.firstOperand, false);
     } else {
-        cell.innerHTML = `<button class="circleButton" onclick='addFirstExpressionOperand(${index})'>+</button>`;
+        cell.innerHTML = `<button class="circleButton" onclick='addFirstExpressionOperand(${expressionId})'>+</button>`;
     }
     return cell;
 }
 
-function getOperationCell(expression, index) {
-    function getOperationSelect(startValue, index) {
-        return `<select class="operationSelect" onchange="changeExpressionOperation(${index}, value)">${operations.map((operation => {
+function getOperationCell(expression) {
+    function getOperationSelect(expression) {
+        let startValue = expression.operation;
+        let expressionId = expression.id;
+        return `<select class="operationSelect" onchange="changeExpressionOperation(${expressionId}, value)">${operations.map((operation => {
             return `<option ${startValue === operation.name ? 'selected' : ''} value=${operation.name}>${operation.sign}</option>`
         })).join("")}</select>`
     }
 
     let cell = document.createElement("td");
-    cell.innerHTML = getOperationSelect(expression.operation, index);
+    cell.innerHTML = getOperationSelect(expression);
     return cell;
 }
 
-function getSecondOperandCell(expression, index) {
+function getSecondOperandCell(expression) {
     let cell = document.createElement("td");
+    let expressionId = expression.id;
     if (expression.secondOperand) {
-        cell.innerHTML = getFractionView(expression.secondOperand, index, "second", false);
+        cell.innerHTML = getFractionView(expression, expression.secondOperand, false);
     } else {
-        cell.innerHTML = `<button class="circleButton"  onclick='addSecondExpressionOperand(${index})'>+</button>`;
+        cell.innerHTML = `<button class="circleButton"  onclick='addSecondExpressionOperand(${expressionId})'>+</button>`;
     }
     return cell;
 }
 
-function getPerformExpressionButton(index) {
+function getPerformExpressionButton(expression) {
     let cell = document.createElement("td");
-    cell.innerHTML = `<button onclick='performExpression(${index})'>=</button>`
+    let expressionId = expression.id;
+    cell.innerHTML = `<button onclick='performExpression(${expressionId})'>=</button>`
     return cell;
 }
 
-function getResultCell(expression, index) {
+function getResultCell(expression) {
     let cell = document.createElement("td");
-    cell.innerHTML = getFractionView(expression.result, index, "result", true);
+    cell.innerHTML = getFractionView(expression, expression.result, true);
     return cell;
 }
 
 // Отображение дроби
-function getFractionView(fraction, index, operandOrder, isReadOnly) {
+function getFractionView(expression, fraction, isReadOnly) {
+    let fractionId = fraction.id;
+    let expressionId = expression.id;
     return `<table class="fraction">
                 <tr>
                     <td rowspan="3" class="sign">
                         <label>
-                            <select onchange="changeSign('${operandOrder}:${index}', value)">
-                                <option value="positive" ${isReadOnly? "disabled": ""} ${fraction.getSign() === "positive" ? "selected" : ""}>+</option>
-                                <option value="negative" ${isReadOnly? "disabled": ""} ${fraction.getSign() === "negative" ? "selected" : ""}>-</option>
+                            <select onchange="changeSign('${expressionId}','${fractionId}', value)">
+                                <option value="positive" ${isReadOnly ? "disabled" : ""} ${fraction.getSign() === "positive" ? "selected" : ""}>+</option>
+                                <option value="negative" ${isReadOnly ? "disabled" : ""} ${fraction.getSign() === "negative" ? "selected" : ""}>-</option>
                             </select>
                         </label>
                     </td>
-                    <td><input ${isReadOnly? "readonly": ""} class="parameterInput" type="text" value="${fraction.numerator}" onchange="changeNumerator('${operandOrder}:${index}', value)"></td>
+                    <td><input ${isReadOnly ? "readonly" : ""} class="parameterInput" type="text" value="${fraction.numerator}" onchange="changeNumerator('${expressionId}', '${fractionId}', value)"></td>
                 </tr>
                 <tr>
                     <td><hr color="black"/></td>
                 </tr>
                 <tr>
                     <td>
-                        <input ${isReadOnly? "readonly": ""} class="parameterInput" id="denominator" type="text" value="${fraction.denominator}" onchange="changeDenominator('${operandOrder}:${index}', value)">
+                        <input ${isReadOnly ? "readonly" : ""} class="parameterInput" id="denominator" type="text" value="${fraction.denominator}" onchange="changeDenominator('${expressionId}', '${fractionId}', value)">
                     </td>
                 </tr>
             </table>`;
 }
 
-function changeSign(str, value) {
-    let operandOrder = str.split(":")[0];
-    let expressionId = str.split(":")[1];
+function changeSign(expressionId, fractionId, value) {
     let expression = getExpression(expressionId);
-    if (operandOrder === "first") {
-        expression.firstOperand.setSign(value);
-    }
-    if (operandOrder === "second") {
-        expression.secondOperand.setSign(value);
-    }
+    let fraction = getFraction(fractionId);
+    fraction.setSign(value);
     expression.result = null;
     updateExpressionsView();
 }
 
-function changeNumerator(str, value) {
+function changeNumerator(expressionId, fractionId, value) {
     if (!isCorrectValue(value, "Числитель")) {
         updateExpressionsView();
         return;
     }
 
-    let operandOrder = str.split(":")[0];
-    let expressionId = str.split(":")[1];
     let expression = getExpression(expressionId);
-
-    if (operandOrder === "first") {
-        expression.firstOperand.setNumerator(value)
-    }
-    if (operandOrder === "second") {
-        expression.secondOperand.setNumerator(value)
-    }
+    let fraction = getFraction(fractionId);
+    fraction.setNumerator(value);
     expression.result = null;
     updateExpressionsView();
 }
 
-function changeDenominator(str, value) {
+function changeDenominator(expressionId, fractionId, value) {
     if (!isCorrectValue(value, "Знаменатель")) {
         updateExpressionsView();
         return;
     }
 
-    let operandOrder = str.split(":")[0];
-    let expressionId = str.split(":")[1];
     let expression = getExpression(expressionId);
-
-    if (operandOrder === "first") {
-        expression.firstOperand.setDenominator(value)
-    }
-    if (operandOrder === "second") {
-        expression.secondOperand.setDenominator(value)
-    }
+    let fraction = getFraction(fractionId);
+    fraction.setDenominator(value);
     expression.result = null;
     updateExpressionsView();
 }
 
 // Генерация выражений
 function generateExpressions() {
-    function getRandomValue(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    function getRandomFraction() {
-        return new Fraction(getRandomValue(1, 10), getRandomValue(1, 10), getRandomValue(1, 2) === 1)
-    }
-
     for (let i = 0; i < 10; i++) {
-        let expression = {
-            firstOperand: getRandomFraction(),
-            operation: operations[getRandomValue(0, operations.length - 1)].name,
-            secondOperand: getRandomFraction(),
-            result: null
-        }
-
-        expression.result = expression.firstOperand[expression.operation](expression.secondOperand);
-
-        expressions.push(expression);
+        let expression = CreateExpression("random");
+        expression.perform();
     }
     updateExpressionsView();
 }
