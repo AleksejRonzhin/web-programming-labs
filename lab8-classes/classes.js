@@ -1,16 +1,15 @@
 let expressions = [];
-function getExpression(expressionId) {
+function getExpressionById(expressionId) {
     return expressions.find((item) => {
         return item.id == expressionId;
     });
 }
 
 let fractions = [];
-function getFraction(fractionId) {
-    let fraction = fractions.find((item) => {
+function getFractionById(fractionId) {
+    return fractions.find((item) => {
         return item && item.id == fractionId;
     });
-    return fraction;
 }
 
 let operations = [{
@@ -39,6 +38,7 @@ function Expression(firstOperand, operation, secondOperand) {
         this.result = this.firstOperand[this.operation](this.secondOperand);
     }
 }
+
 Expression.count = 0;
 
 function Fraction(numerator, denominator, isPositive) {
@@ -48,27 +48,27 @@ function Fraction(numerator, denominator, isPositive) {
     this.id = Fraction.count++;
 
     this.toString = function () {
-        this.registrationAction("toString", arguments);
+        this.registerAction("toString", arguments);
         return `${this.isPositive ? "" : " - "} ${this.numerator} / ${this.denominator}`;
     };
 
     this.getNumerator = function () {
-        this.registrationAction("getNumerator", arguments);
+        this.registerAction("getNumerator", arguments);
         return this.numerator;
     };
 
     this.setNumerator = function (value) {
-        this.registrationAction("setNumerator", arguments);
+        this.registerAction("setNumerator", arguments);
         this.numerator = value;
     };
 
     this.getDenominator = function () {
-        this.registrationAction("getDenominator", arguments);
+        this.registerAction("getDenominator", arguments);
         return this.denominator;
     };
 
     this.setDenominator = function (value) {
-        this.registrationAction("setDenominator", arguments);
+        this.registerAction("setDenominator", arguments);
         this.denominator = value;
     };
 
@@ -81,7 +81,7 @@ function Fraction(numerator, denominator, isPositive) {
     }
 
     this.add = function (fraction) {
-        this.registrationAction("add", fraction);
+        this.registerAction("add", fraction);
         let numerator = (this.isPositive ? 1 : -1) * this.numerator * fraction.denominator + (fraction.isPositive ? 1 : -1) * fraction.numerator * this.denominator;
         let denominator = this.denominator * fraction.denominator;
 
@@ -96,7 +96,7 @@ function Fraction(numerator, denominator, isPositive) {
     };
 
     this.sub = function (fraction) {
-        this.registrationAction("sub", fraction);
+        this.registerAction("sub", fraction);
         let numerator = (this.isPositive ? 1 : -1) * this.numerator * fraction.denominator - (fraction.isPositive ? 1 : -1) * fraction.numerator * this.denominator;
         let denominator = this.denominator * fraction.denominator;
 
@@ -112,7 +112,7 @@ function Fraction(numerator, denominator, isPositive) {
     };
 
     this.mul = function (fraction) {
-        this.registrationAction("mul", fraction);
+        this.registerAction("mul", fraction);
         let numerator = this.numerator * fraction.numerator;
         let denominator = this.denominator * fraction.denominator;
         let isPositive = this.isPositive * fraction.isPositive || !this.isPositive * !fraction.isPositive;
@@ -122,7 +122,7 @@ function Fraction(numerator, denominator, isPositive) {
     };
 
     this.division = function (fraction) {
-        this.registrationAction("division", fraction);
+        this.registerAction("division", fraction);
         let numerator = this.numerator * fraction.denominator;
         let denominator = this.denominator * fraction.numerator;
         let isPositive = this.isPositive * fraction.isPositive || !this.isPositive * !fraction.isPositive;
@@ -132,7 +132,7 @@ function Fraction(numerator, denominator, isPositive) {
     };
 
     this.assignment = function (fraction) {
-        this.registrationAction("assignment", fraction);
+        this.registerAction("assignment", fraction);
         this.numerator = fraction.numerator;
         this.denominator = fraction.denominator;
         this.isPositive = fraction.isPositive;
@@ -158,22 +158,23 @@ function Fraction(numerator, denominator, isPositive) {
 
 Fraction.count = 0;
 
-Fraction.prototype.registrationActions = [];
+Fraction.prototype = new BaseObject();
 
-Fraction.prototype.registrationAction = function (action, ...args) {
-    let time = new Date();
-    this.registrationActions.push({
-        action: action, time: time, args: args
-    })
-};
-
-Fraction.prototype.clearRegistrationActions = function () {
+function BaseObject(){
     this.registrationActions = [];
-    console.log("Список действий очищен!")
-}
-
-Fraction.prototype.outputRegistrationActions = function () {
-    console.log(this.registrationActions);
+    this.registerAction = function (action, ...args) {
+        let time = new Date();
+        this.registrationActions.push({
+            action: action, time: time, args: args
+        })
+    };
+    this.clearRegistrationActions = function () {
+        this.registrationActions = [];
+        console.log("Список действий очищен!")
+    };
+    this.outputRegistrationActions = function () {
+        console.log(this.registrationActions);
+    }
 }
 
 function CreateExpression(mode) {
@@ -222,8 +223,7 @@ function getDefaultFraction() {
     let numerator = document.getElementById("numerator").value;
     let denominator = document.getElementById("denominator").value;
     let isPositive = document.getElementById("isPositiveSelect").value;
-    let fraction = new Fraction(numerator, denominator, isPositive === "positive");
-    return fraction;
+    return new Fraction(numerator, denominator, isPositive === "positive");
 }
 
 //Зарегистрированные действия
@@ -243,26 +243,26 @@ function addExpression() {
 }
 
 function changeExpressionOperation(expressionId, value) {
-    let expression = getExpression(expressionId);
+    let expression = getExpressionById(expressionId);
     expression.result = null;
     expression.operation = value;
     updateExpressionsView();
 }
 
 function addFirstExpressionOperand(expressionId) {
-    let expression = getExpression(expressionId);
+    let expression = getExpressionById(expressionId);
     expression.firstOperand = CreateFraction("default");
     updateExpressionsView();
 }
 
 function addSecondExpressionOperand(expressionId) {
-    let expression = getExpression(expressionId);
+    let expression = getExpressionById(expressionId);
     expression.secondOperand = CreateFraction("default");
     updateExpressionsView();
 }
 
 function performExpression(expressionId) {
-    let expression = getExpression(expressionId);
+    let expression = getExpressionById(expressionId);
     expression.perform();
     updateExpressionsView();
 }
@@ -383,8 +383,8 @@ function getFractionView(expression, fraction, isReadOnly) {
 }
 
 function changeSign(expressionId, fractionId, value) {
-    let expression = getExpression(expressionId);
-    let fraction = getFraction(fractionId);
+    let expression = getExpressionById(expressionId);
+    let fraction = getFractionById(fractionId);
     fraction.setSign(value);
     expression.result = null;
     updateExpressionsView();
@@ -396,8 +396,8 @@ function changeNumerator(expressionId, fractionId, value) {
         return;
     }
 
-    let expression = getExpression(expressionId);
-    let fraction = getFraction(fractionId);
+    let expression = getExpressionById(expressionId);
+    let fraction = getFractionById(fractionId);
     fraction.setNumerator(value);
     expression.result = null;
     updateExpressionsView();
@@ -409,8 +409,8 @@ function changeDenominator(expressionId, fractionId, value) {
         return;
     }
 
-    let expression = getExpression(expressionId);
-    let fraction = getFraction(fractionId);
+    let expression = getExpressionById(expressionId);
+    let fraction = getFractionById(fractionId);
     fraction.setDenominator(value);
     expression.result = null;
     updateExpressionsView();
